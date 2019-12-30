@@ -1,5 +1,5 @@
 PlexMediaFixup - Run configurable fixups against the media database of a Plex Media Server
-===============================
+==========================================================================================
 
 .. image:: https://img.shields.io/pypi/v/plexmediafixup.svg
     :target: https://pypi.python.org/pypi/plexmediafixup/
@@ -28,6 +28,8 @@ PlexMediaFixup - Run configurable fixups against the media database of a Plex Me
 
 Overview
 --------
+
+**This project is work in progress**
 
 TBD
 
