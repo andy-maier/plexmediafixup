@@ -75,7 +75,8 @@ setuptools.setup(
     install_requires=install_requires,
     dependency_links=dependency_links,
 
-    description="Run configurable fixups against the media database of a Plex Media Server",
+    description="Run configurable fixups against the media database of a "
+    "Plex Media Server",
     long_description=read_file('README.rst'),
     long_description_content_type='text/x-rst',
     license="Apache Software License 2.0",

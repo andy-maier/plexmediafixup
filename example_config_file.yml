@@ -1,0 +1,10 @@
+# Config file for plexmediafixup project
+#
+# Note: This is an example file that should be copied and updated as needed.
+
+server: SERVER                  # IP address or host name of Plex Media Server
+username: USERNAME              # User name on Plex Media Server to be used
+password: PASSWORD              # Password of that user on Plex Media Server
+
+fixups:
+  set_sort_title_to_title: true # Set sort title field to value of title field
