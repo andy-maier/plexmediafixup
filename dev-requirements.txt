@@ -1,0 +1,58 @@
+# Pip requirements file for development of PlexMediaFixup project.
+#
+# The order of packages is significant, because pip processes them in the order
+# of appearance.
+#
+# Make sure that the minimum versions required in this file are consistent with
+# the minimum versions specified in minimum-constraints.txt.
+
+-r requirements.txt
+
+
+# Direct dependencies:
+
+# Unit test (imports into testcases):
+# pytest 5.0.0 has removed support for Python < 3.5
+# pytest 4.3.1 solves an issue on Python 3 with minimum package levels
+pytest>=4.3.1,<5.0.0; python_version < '3.5'
+pytest>=4.3.1; python_version >= '3.5'
+testfixtures>=6.9.0
+
+# Coverage reporting (no imports, invoked via coveralls script).
+coverage>=4.5.3
+python-coveralls>=2.9.2
+
+# Safety CI by pyup.io
+safety>=1.8.4
+
+# Unit test (no imports, invoked via py.test script):
+pytest-cov>=2.4.0
+
+# Tox
+tox>=2.0.0
+
+# Sphinx (no imports, invoked via sphinx-build script):
+Sphinx>=1.7.6,<2.0.0; python_version < '3.5'  # BSD
+Sphinx>=1.7.6,<2.0.0; python_version >= '3.5'  # BSD
+# TODO: On Python 3.5 and higher, Sphinx currently fails, see issue
+#       https://github.com/sphinx-doc/sphinx/issues/6246. Therefore, Sphinx has
+#       been pinned to below 2.0.0 also for those Python versions.
+sphinxcontrib-fulltoc>=1.2.0
+
+# PyLint (no imports, invoked via pylint script)
+# Pylint requires astroid
+# Pylint 1.x supports py27 and py34/35/36 but not py37+
+# Pylint 2.x supports py34+
+pylint>=1.6.4,<2.0.0; python_version == '2.7'
+pylint>=2.2.2; python_version >= '3.4'
+astroid>=1.4.9,<2.0.0; python_version == '2.7'
+astroid>=2.1.0; python_version >= '3.4'
+
+# Flake8 (no imports, invoked via flake8 script):
+flake8>=3.7.0
+
+# Twine (no imports, invoked via twine script):
+twine>=1.8.1
+
+
+# Indirect dependencies are not specified in this file.
