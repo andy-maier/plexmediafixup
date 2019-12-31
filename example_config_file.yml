@@ -11,3 +11,4 @@ fixups:
   - name: sync_sort_title
     title: Set sort title field to value of title field
     enabled: true
+    kwargs:
