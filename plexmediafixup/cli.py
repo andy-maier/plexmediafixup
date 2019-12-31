@@ -100,6 +100,13 @@ CONFIG_FILE_SCHEMA = {
                             "true", "false"
                         ],
                     },
+                    "kwargs": {
+                        "$id": "#/properties/fixups/items/"
+                        "properties/kwargs",
+                        "type": "object",
+                        "title": "Keyword arguments for passing on to the "
+                        "fixup",
+                    },
                 }
             }
         }
@@ -201,8 +208,9 @@ def main():
         name = fixup['name']  # required item
         # title = fixup['title']  # required item
         enabled = fixup['enabled']  # required item
+        kwargs = fixup.get('kwargs', dict())
         if enabled:
-            fixup = fixup_mgr.get_fixup(name)
+            fixup = fixup_mgr.get_fixup(name, kwargs)
             if args.verbose:
                 print("Executing fixup {name}".format(name=name))
             fixup.run(plex_server)

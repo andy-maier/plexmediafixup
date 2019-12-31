@@ -21,7 +21,7 @@ class FixupManager(object):
         self._fixup_package_path = 'plexmediafixup.fixups'
         self._fixup_objects = dict()  # Loaded fixup objects by fixup name
 
-    def get_fixup(self, name, **kwargs):
+    def get_fixup(self, name, kwargs):
         """
         Return the fixup object for the specified fixup name.
 
@@ -36,7 +36,8 @@ class FixupManager(object):
 
             name (string): Name of the fixup.
 
-            **kwargs: keyword args that are passed on to initialize the fixup.
+            kwargs (dict): Keyword args that are passed on to initialize the
+              fixup.
 
         Returns:
 
@@ -55,7 +56,7 @@ class FixupManager(object):
             for name, obj in inspect.getmembers(fixup_module):
                 if inspect.isclass(obj) and \
                         issubclass(obj, Fixup) and obj != Fixup:
-                    fixup_object = obj(**kwargs)
+                    fixup_object = obj(kwargs)
                     self._fixup_objects[name] = fixup_object
                     return fixup_object
 
@@ -65,15 +66,18 @@ class Fixup(object):
     Base class for fixup classes in fixup modules.
     """
 
-    def __init__(self, name):
+    def __init__(self, name, kwargs):
         """
         Init function, must be called by fixup subclass.
 
         Parameters:
 
           name (string): Name of the fixup.
+
+          kwargs (dict): Keyword arguments to initialize the fixup.
         """
         self.name = name
+        self.kwargs = kwargs
 
     def run(self, plex_server):
         """
