@@ -2,9 +2,12 @@
 #
 # Note: This is an example file that should be copied and updated as needed.
 
-server: SERVER                  # IP address or host name of Plex Media Server
-username: USERNAME              # User name on Plex Media Server to be used
-password: PASSWORD              # Password of that user on Plex Media Server
+servername: "SERVERNAME"    # Server name of the Plex Media Server (not IP or hostname)
+username: "USERNAME"        # Username (email) of the Plex Account
+password: "PASSWORD"        # Password of the Plex Account
 
 fixups:
-  set_sort_title_to_title: true # Set sort title field to value of title field
+
+  - name: sync_sort_title
+    title: Set sort title field to value of title field
+    enabled: true
