@@ -1,14 +1,31 @@
-# Config file for plexmediafixup project
+# plexmediafixup config file
 #
 # Note: This is an example file that should be copied and updated as needed.
 
-servername: "SERVERNAME"    # Server name of the Plex Media Server (not IP or hostname)
-username: "USERNAME"        # Username (email) of the Plex Account
-password: "PASSWORD"        # Password of the Plex Account
+# Path name of PlexAPI config file. Omitting this value or specifying null
+# causes the default to be used (i.e. env var PLEXAPI_CONFIG_PATH or
+# ~/.config/plexapi/config.ini).
+plexapi_config_path: null
+
+# Flag controlling whether connection is directly to the Plex Media Server
+# (true) or indirectly via the plex.tv web site (false). Using direct
+# connection requires the PlexAPI config file parameters auth.server_baseurl
+# and auth.server_token to be set. Using indirect connection requires the
+# PlexAPI config file parameters auth.myplex_username and auth.myplex_password
+# to be set, as well as the server_name parameter in this config file.
+direct_connection: true
+
+# Server name of the Plex Media Server. This is not the IP address or host
+# name, but the server name that can be found in the top left corner of the
+# Plex web GUI. This parameter is only required for indirect connection.
+server_name: "SERVERNAME"
 
 fixups:
 
   - name: sync_sort_title
-    title: Set sort title field to value of title field
     enabled: true
+    dryrun: true
     kwargs:
+      section_types: [movie, show]
+      section_title_pattern: '.*'
+      title_pattern: '.*'

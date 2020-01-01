@@ -9,6 +9,7 @@ import sys
 from pprint import pprint
 import argparse
 import json
+import six
 import plexapi
 import plexapi.myplex
 import plexapi.exceptions
@@ -26,36 +27,45 @@ CONFIG_FILE_SCHEMA = {
     "type": "object",
     "title": "plexmediafixup config file",
     "required": [
-        "servername",
-        "username",
-        "password",
+        "plexapi_config_path",
+        "direct_connection",
     ],
     "additionalProperties": False,
     "properties": {
-        "servername": {
-            "$id": "#/properties/server",
-            "type": "string",
+        "plexapi_config_path": {
+            "$id": "#/properties/plexapi_config_path",
+            "type": ["null", "string"],
+            "title": "Path name of PlexAPI config file. Specifying null causes "
+            "the default to be used (i.e. env var PLEXAPI_CONFIG_PATH or "
+            "~/.config/plexapi/config.ini)",
+            "examples": [
+                "null", "my-plexapi-config.ini"
+            ],
+        },
+        "direct_connection": {
+            "$id": "#/properties/direct_connection",
+            "type": "boolean",
+            "title": "Flag controlling whether connection is directly to the "
+            "Plex Media Server (true) or indirectly via the plex.tv web site "
+            "(false). Using direct connection requires the PlexAPI config "
+            "file parameters auth.server_baseurl and auth.server_token to be "
+            "set. Using indirect connection requires the PlexAPI config file "
+            "parameters auth.myplex_username and auth.myplex_password to be "
+            "set, as well as the server_name parameter in this config file.",
+            "examples": [
+                "true", "false"
+            ],
+        },
+        "server_name": {
+            "$id": "#/properties/server_name",
+            "type": ["null", "string"],
+            "default": None,
             "title": "Server name of the Plex Media Server. This is not the "
             "IP address or host name, but the server name that can be found "
-            "in the top left corner of the GUI.",
+            "in the top left corner of the Plex web GUI. This parameter is "
+            "only required for indirect connection.",
             "examples": [
                 "MyPlex"
-            ],
-        },
-        "username": {
-            "$id": "#/properties/username",
-            "type": "string",
-            "title": "Username (email) of the Plex Account",
-            "examples": [
-                "john.doe@gmx.de"
-            ],
-        },
-        "password": {
-            "$id": "#/properties/password",
-            "type": "string",
-            "title": "Password of the Plex Account",
-            "examples": [
-                "password"
             ],
         },
         "fixups": {
@@ -68,10 +78,10 @@ CONFIG_FILE_SCHEMA = {
                 "type": "object",
                 "required": [
                     "name",
-                    "title",
                     "enabled",
+                    "dryrun",
                 ],
-                "additionalProperties": True,
+                "additionalProperties": False,
                 "properties": {
                     "name": {
                         "$id": "#/properties/fixups/items/properties/name",
@@ -80,15 +90,6 @@ CONFIG_FILE_SCHEMA = {
                         "file)",
                         "examples": [
                             "example_fixup"
-                        ],
-                    },
-                    "title": {
-                        "$id": "#/properties/fixups/items/"
-                        "properties/title",
-                        "type": "string",
-                        "title": "One-line title of the fixup",
-                        "examples": [
-                            "Example fixup"
                         ],
                     },
                     "enabled": {
@@ -108,7 +109,6 @@ CONFIG_FILE_SCHEMA = {
                         "title": "Flag passed to the fixup controlling "
                         "whether it actually performs its work vs just "
                         "reporting it",
-                        "default": "false",
                         "examples": [
                             "true", "false"
                         ],
@@ -117,6 +117,7 @@ CONFIG_FILE_SCHEMA = {
                         "$id": "#/properties/fixups/items/"
                         "properties/kwargs",
                         "type": "object",
+                        "default": [],
                         "title": "Keyword arguments for passing on to the "
                         "fixup",
                     },
@@ -181,8 +182,6 @@ def main():
     argparser = create_parser(prog)
     args = argparser.parse_args()
 
-    config = ConfigFile(args.config_file, CONFIG_FILE_SCHEMA)
-
     if args.version:
         print("{v}".format(v=__version__))
         return 0
@@ -195,21 +194,27 @@ def main():
         print("Error: Config file must be specified.")
         return 1
 
+    if args.verbose:
+        print("Using plexmediafixup config file: {file}".
+              format(file=args.config_file))
+    config = ConfigFile(args.config_file, CONFIG_FILE_SCHEMA)
     try:
         config.load()
     except ConfigFileError as exc:
         print("Error: {}".format(exc))
         return 1
-
-    if args.verbose:
-        print("Loaded config file {file}".
-              format(file=config.filepath))
-
-    servername = config.data['servername']  # required item
-    username = config.data['username']  # required item
-    password = config.data['password']  # required item
-    fixups = config.data.get('fixups', [])
+    plexapi_config_path = config.data['plexapi_config_path']  # required item
+    direct_connection = config.data['direct_connection']  # required item
+    server_name = config.data['server_name']  # optional but defaulted item
+    fixups = config.data['fixups']  # optional but defaulted item
     fixup_mgr = FixupManager()
+
+    if not plexapi_config_path:
+        plexapi_config_path = plexapi.CONFIG_PATH
+    if args.verbose:
+        print("Using PlexAPI config file: {file}".
+              format(file=plexapi_config_path))
+    plexapi_config = plexapi.config.PlexConfig(plexapi_config_path)
 
     # Verify that the fixups can be loaded
     for fixup in fixups:
@@ -222,26 +227,81 @@ def main():
                 print("Loaded fixup: {name} (dryrun={dryrun})".
                       format(name=name, dryrun=dryrun))
 
+    if direct_connection:
+
+        server_baseurl = plexapi_config.get('auth.server_baseurl', None)
+        if server_baseurl is None:
+            print("Error: Parameter auth.server_baseurl is required for "
+                  "direct connection but is not set in PlexAPI config file "
+                  "{file}".
+                  format(file=plexapi_config_path))
+            return 1
+
+        server_token = plexapi_config.get('auth.server_token', None)
+        if server_token is None:
+            print("Error: Parameter auth.server_token is required for "
+                  "direct connection but is not set in PlexAPI config file "
+                  "{file}".
+                  format(file=plexapi_config_path))
+            return 1
+
+        try:
+            plex = plexapi.server.PlexServer()
+        except plexapi.exceptions.PlexApiException as exc:
+            print("Error: Cannot connect to Plex server at {url}: {msg}".
+                  format(url=server_baseurl, msg=exc))
+            return 1
+
+        if args.verbose:
+            print("Connected directly to Plex Media Server at {url}".
+                  format(url=server_baseurl))
+
+    else:
+
+        myplex_username = plexapi_config.get('auth.myplex_username', None)
+        if not myplex_username:
+            print("Error: Parameter auth.myplex_username is required for "
+                  "indirect connection but is not set in PlexAPI config file "
+                  "{file}".
+                  format(file=plexapi_config_path))
+            return 1
+
+        myplex_password = plexapi_config.get('auth.myplex_password', None)
+        if not myplex_username:
+            print("Error: Parameter auth.myplex_password is required for "
+                  "indirect connection but is not set in PlexAPI config file "
+                  "{file}".
+                  format(file=plexapi_config_path))
+            return 1
+
+        if not server_name:
+            print("Error: Parameter server_name is required for "
+                  "indirect connection but is not set in plexmediafixup "
+                  "config file {file}".
+                  format(file=config.filepath))
+            return 1
+
+        try:
+            account = plexapi.myplex.MyPlexAccount(
+                myplex_username, myplex_password)
+        except plexapi.exceptions.PlexApiException as exc:
+            print("Error: Cannot login to Plex account {user}: {msg}".
+                  format(user=myplex_username, msg=exc))
+            return 1
+
+        try:
+            plex = account.resource(server_name).connect()
+        except plexapi.exceptions.PlexApiException as exc:
+            print("Error: Cannot connect to server {srv} of Plex account "
+                  "{user}: {msg}".
+                  format(srv=server_name, user=myplex_username, msg=exc))
+            return 1
+
+        if args.verbose:
+            print("Connected indirectly to server {srv} of Plex account {user}".
+                  format(srv=server_name, user=myplex_username))
+
     plexapi.TIMEOUT = 300
-
-    try:
-        plex_account = plexapi.myplex.MyPlexAccount(username, password)
-    except plexapi.exceptions.PlexApiException as exc:
-        print("Error: Cannot login to Plex account {user}: {msg}".
-              format(user=username, msg=exc))
-        return 1
-
-    try:
-        plex = plex_account.resource(servername).connect()
-    except plexapi.exceptions.PlexApiException as exc:
-        print("Error: Cannot connect to server {srv} of Plex account {user}: "
-              "{msg}".
-              format(srv=servername, user=username, msg=exc))
-        return 1
-
-    if args.verbose:
-        print("Connected to server {srv} of Plex account {user}".
-              format(srv=servername, user=username))
 
     for fixup in fixups:
         name = fixup['name']  # required item
@@ -253,7 +313,15 @@ def main():
             if args.verbose:
                 print("Executing fixup: {name} (dryrun={dryrun})".
                       format(name=name, dryrun=dryrun))
-            fixup.run(plex=plex, dryrun=dryrun, verbose=args.verbose, **kwargs)
+            rc = fixup.run(plex=plex, dryrun=dryrun, verbose=args.verbose,
+                           **kwargs)
+            if rc:
+                print("Error: Fixup {name} has encountered errors - aborting".
+                      format(name=name))
+                return 1
+            if args.verbose:
+                print("Fixup succeeded: {name} (dryrun={dryrun})".
+                      format(name=name, dryrun=dryrun))
 
     return 0
 
