@@ -15,6 +15,7 @@ import plexapi.exceptions
 from ._reuse._smart_formatter import SmartFormatter
 from ._reuse._config_file import ConfigFile, ConfigFileError
 from ._fixup import FixupManager
+from ._version import __version__
 
 
 # JSON schema describing the structure of config files
@@ -100,6 +101,18 @@ CONFIG_FILE_SCHEMA = {
                             "true", "false"
                         ],
                     },
+                    "dryrun": {
+                        "$id": "#/properties/fixups/items/"
+                        "properties/dryrun",
+                        "type": "boolean",
+                        "title": "Flag passed to the fixup controlling "
+                        "whether it actually performs its work vs just "
+                        "reporting it",
+                        "default": "false",
+                        "examples": [
+                            "true", "false"
+                        ],
+                    },
                     "kwargs": {
                         "$id": "#/properties/fixups/items/"
                         "properties/kwargs",
@@ -133,7 +146,8 @@ def create_parser(prog):
     pos_arggroup = argparser.add_argument_group(
         'Positional arguments')
     pos_arggroup.add_argument(
-        'config_file', metavar='CONFIG_FILE',
+        dest='config_file', metavar='CONFIG_FILE',
+        action='store', nargs='?', default=None,
         help='Config file for the script.')
 
     general_arggroup = argparser.add_argument_group(
@@ -142,6 +156,10 @@ def create_parser(prog):
         '-v', '--verbose', dest='verbose',
         action='store_true', default=False,
         help='Print more messages while processing')
+    general_arggroup.add_argument(
+        '--version', dest='version',
+        action='store_true', default=False,
+        help='Print version of this program and exit')
     general_arggroup.add_argument(
         '-h', '--help', action='help',
         help='Show this help message and exit')
@@ -165,9 +183,17 @@ def main():
 
     config = ConfigFile(args.config_file, CONFIG_FILE_SCHEMA)
 
+    if args.version:
+        print("{v}".format(v=__version__))
+        return 0
+
     if args.help_config:
         print(config.help())
-        return 2
+        return 0
+
+    if args.config_file is None:
+        print("Error: Config file must be specified.")
+        return 1
 
     try:
         config.load()
@@ -182,6 +208,21 @@ def main():
     servername = config.data['servername']  # required item
     username = config.data['username']  # required item
     password = config.data['password']  # required item
+    fixups = config.data.get('fixups', [])
+    fixup_mgr = FixupManager()
+
+    # Verify that the fixups can be loaded
+    for fixup in fixups:
+        name = fixup['name']  # required item
+        enabled = fixup['enabled']  # required item
+        dryrun = fixup['dryrun']  # optional but defaulted item
+        if enabled:
+            fixup_mgr.get_fixup(name)
+            if args.verbose:
+                print("Loaded fixup: {name} (dryrun={dryrun})".
+                      format(name=name, dryrun=dryrun))
+
+    plexapi.TIMEOUT = 300
 
     try:
         plex_account = plexapi.myplex.MyPlexAccount(username, password)
@@ -191,7 +232,7 @@ def main():
         return 1
 
     try:
-        plex_server = plex_account.resource(servername).connect()
+        plex = plex_account.resource(servername).connect()
     except plexapi.exceptions.PlexApiException as exc:
         print("Error: Cannot connect to server {srv} of Plex account {user}: "
               "{msg}".
@@ -202,18 +243,17 @@ def main():
         print("Connected to server {srv} of Plex account {user}".
               format(srv=servername, user=username))
 
-    fixup_mgr = FixupManager()
-    fixups = config.data.get('fixups', [])
     for fixup in fixups:
         name = fixup['name']  # required item
-        # title = fixup['title']  # required item
         enabled = fixup['enabled']  # required item
+        dryrun = fixup['dryrun']  # optional but defaulted item
         kwargs = fixup.get('kwargs', dict())
         if enabled:
-            fixup = fixup_mgr.get_fixup(name, kwargs)
+            fixup = fixup_mgr.get_fixup(name)
             if args.verbose:
-                print("Executing fixup {name}".format(name=name))
-            fixup.run(plex_server)
+                print("Executing fixup: {name} (dryrun={dryrun})".
+                      format(name=name, dryrun=dryrun))
+            fixup.run(plex=plex, dryrun=dryrun, verbose=args.verbose, **kwargs)
 
     return 0
 

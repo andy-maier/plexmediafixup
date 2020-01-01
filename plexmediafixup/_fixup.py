@@ -21,7 +21,7 @@ class FixupManager(object):
         self._fixup_package_path = 'plexmediafixup.fixups'
         self._fixup_objects = dict()  # Loaded fixup objects by fixup name
 
-    def get_fixup(self, name, kwargs):
+    def get_fixup(self, name):
         """
         Return the fixup object for the specified fixup name.
 
@@ -29,15 +29,11 @@ class FixupManager(object):
         it is returned.
 
         Otherwise, the fixup module with that name is imported, a fixup object
-        is created (passing on the kwargs), and the fixup object is added
-        to the manager.
+        is created, and the fixup object is added to the manager.
 
         Parameters:
 
             name (string): Name of the fixup.
-
-            kwargs (dict): Keyword args that are passed on to initialize the
-              fixup.
 
         Returns:
 
@@ -56,7 +52,7 @@ class FixupManager(object):
             for name, obj in inspect.getmembers(fixup_module):
                 if inspect.isclass(obj) and \
                         issubclass(obj, Fixup) and obj != Fixup:
-                    fixup_object = obj(kwargs)
+                    fixup_object = obj()
                     self._fixup_objects[name] = fixup_object
                     return fixup_object
 
@@ -66,20 +62,17 @@ class Fixup(object):
     Base class for fixup classes in fixup modules.
     """
 
-    def __init__(self, name, kwargs):
+    def __init__(self, name):
         """
         Init function, must be called by fixup subclass.
 
         Parameters:
 
           name (string): Name of the fixup.
-
-          kwargs (dict): Keyword arguments to initialize the fixup.
         """
         self.name = name
-        self.kwargs = kwargs
 
-    def run(self, plex_server):
+    def run(self, plex, dryrun, verbose, **kwargs):
         """
         Funxtion to execute the fixup. Must be implemented in fixup subclass.
         """
