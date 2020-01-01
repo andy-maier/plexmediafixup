@@ -59,6 +59,7 @@ wheel==0.33.6; python_version >= '3.8'
 PlexAPI==3.0.0
 yamlloader==0.5.0
 jsonschema==3.0.0
+six==1.10.0
 
 
 # Indirect dependencies for installation
