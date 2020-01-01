@@ -4,7 +4,7 @@ Fixup sync_sort_title.
 
 from __future__ import print_function, absolute_import
 from .._fixup import Fixup
-from .._reuse._unicode import ensure_bytes
+from .._reuse.unicode import ensure_bytes
 import re
 import json
 import six
