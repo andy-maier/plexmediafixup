@@ -13,8 +13,8 @@ import six
 import plexapi
 import plexapi.myplex
 import plexapi.exceptions
-from ._reuse._smart_formatter import SmartFormatter
-from ._reuse._config_file import ConfigFile, ConfigFileError
+from ._reuse.smart_formatter import SmartFormatter
+from ._reuse.config_file import ConfigFile, ConfigFileError
 from ._fixup import FixupManager
 from ._version import __version__
 
@@ -128,10 +128,13 @@ CONFIG_FILE_SCHEMA = {
 }
 
 
-def create_parser(prog):
+def parse_args():
     """
-    Return an argparse command line parser for this script.
+    Parse command line arguments for this script and return the result of
+    argparse.ArgumentParser.parse_args().
     """
+
+    prog = sys.argv[0]
 
     usage = "%(prog)s [options] CONFIG_FILE"
 
@@ -169,7 +172,9 @@ def create_parser(prog):
         action='store_true', default=False,
         help='Print help on the config file')
 
-    return argparser
+    args = argparser.parse_args()
+
+    return args
 
 
 def main():
@@ -177,10 +182,7 @@ def main():
     Main function of the script.
     """
 
-    prog = sys.argv[0]
-
-    argparser = create_parser(prog)
-    args = argparser.parse_args()
+    args = parse_args()
 
     if args.version:
         print("{v}".format(v=__version__))

@@ -7,7 +7,7 @@ import errno
 import yaml  # PyYAML package
 import yamlloader
 import jsonschema
-from ._json_schema_defaults import extend_with_default
+from .json_schema_defaults import extend_with_default
 
 
 class ConfigFileError(Exception):
