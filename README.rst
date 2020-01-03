@@ -161,8 +161,9 @@ The PlexMediaFixup project is provided under the
 .. _PlexAPI config file: https://python-plexapi.readthedocs.io/en/latest/configuration.html
 .. _PlexAPI environment variables: https://python-plexapi.readthedocs.io/en/latest/configuration.html#environment-variables
 .. _Finding your server auth token: https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
-.. _example_config_file.yml: example_config_file.yml
 .. _YAML format: https://yaml.org/start.html
+
 .. _issue tracker: https://github.com/andy-maier/plexmediafixup/issues
+.. _example_config_file.yml: https://github.com/andy-maier/plexmediafixup/blob/master/example_config_file.yml
 .. _Apache Software License 2.0: https://github.com/andy-maier/plexmediafixup/blob/master/LICENSE
 .. _Development: https://github.com/andy-maier/plexmediafixup/blob/master/DEVELOPMENT.rst
