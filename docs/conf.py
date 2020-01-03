@@ -70,7 +70,6 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode',   # disabed, raises anexception
     'sphinx.ext.ifconfig',
-    'sphinx_git',            # requires 'sphinx-git' Python package
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -105,7 +104,7 @@ _short_description = u"Run configurable fixups against the media database of a P
 
 # The short X.Y version.
 # Note: We use the full version in both cases (e.g. 'M.N.U' or 'M.N.U.dev0').
-version = get_version(os.path.join('..', 'plexmediafixup', '_version.py'))
+version = get_version(os.path.join('..', 'plexmediafixup', 'version.py'))
 
 # The full version, including alpha/beta/rc tags.
 release = version

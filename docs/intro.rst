@@ -120,10 +120,10 @@ Package version
 The version of the plexmediafixup package can be accessed by
 programs using the ``plexmediafixup.__version__`` variable:
 
-.. autodata:: plexmediafixup._version.__version__
+.. autodata:: plexmediafixup.version.__version__
 
 Note: For tooling reasons, the variable is shown as
-``plexmediafixup._version.__version__``, but it should be used as
+``plexmediafixup.version.__version__``, but it should be used as
 ``plexmediafixup.__version__``.
 
 
