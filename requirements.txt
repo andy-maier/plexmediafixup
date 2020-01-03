@@ -14,4 +14,9 @@ yamlloader>=0.5.0
 jsonschema>=3.0.0
 six>=1.10.0
 
+# TODO: The following is a circumvention for PlexAPI requiring but not
+# specifying the mock package. Should be fixed in next PlexAPI version.
+mock>=2.0.0
+
+
 # Indirect dependencies are not specified in this file.
