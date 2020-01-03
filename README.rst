@@ -146,14 +146,14 @@ Contributing
 ------------
 
 Contributions to the PlexMediaFixup project are welcome; for details see
-`Development <DEVELOPMENT.rst>`_.
+`Development`_.
 
 
 License
 -------
 
 The PlexMediaFixup project is provided under the
-`Apache Software License 2.0 <LICENSE>`_.
+`Apache Software License 2.0`_.
 
 
 .. _Plex Media Server: https://en.wikipedia.org/wiki/Plex_(software)
@@ -164,3 +164,5 @@ The PlexMediaFixup project is provided under the
 .. _example_config_file.yml: example_config_file.yml
 .. _YAML format: https://yaml.org/start.html
 .. _issue tracker: https://github.com/andy-maier/plexmediafixup/issues
+.. _Apache Software License 2.0: https://github.com/andy-maier/plexmediafixup/blob/master/LICENSE
+.. _Development: https://github.com/andy-maier/plexmediafixup/blob/master/DEVELOPMENT.rst
