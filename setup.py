@@ -85,11 +85,7 @@ setuptools.setup(
     maintainer="Andreas Maier",
     maintainer_email='andreas.r.maier@gmx.de',
     url='https://github.com/andy-maier/plexmediafixup',
-    project_urls={
-        'Bug Tracker': 'https://github.com/andy-maier/plexmediafixup/issues',
-        'Documentation': 'https://plexmediafixup.readthedocs.io/en/latest/',
-        'Source Code': 'https://github.com/andy-maier/plexmediafixup',
-    },
+    project_urls={},
     entry_points={
         'console_scripts': [
             'plexmediafixup=plexmediafixup.cli:main',
