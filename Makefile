@@ -204,7 +204,6 @@ endif
 dist_included_files := \
     LICENSE \
     README.rst \
-    INSTALL.md \
     $(wildcard *.py) \
     $(wildcard $(package_name)/*.py) \
 
