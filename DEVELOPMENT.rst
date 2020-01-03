@@ -59,28 +59,6 @@ Setting up the development environment
 .. _virtual Python environment: https://docs.python-guide.org/en/latest/dev/virtualenvs/
 
 
-.. _`Building the documentation`:
-
-Building the documentation
---------------------------
-
-The ReadTheDocs (RTD) site is used to publish the documentation for the
-project package at https://plexmediafixup.readthedocs.io/
-
-This page is automatically updated whenever the Git repo for this package
-changes the branch from which this documentation is built.
-
-In order to build the documentation locally from the Git work directory,
-execute:
-
-.. code-block:: bash
-
-    $ make builddoc
-
-The top-level document to open with a web browser will be
-``build_doc/html/docs/index.html``.
-
-
 .. _`Testing`:
 
 .. # Keep the tests/README file in sync with this 'Testing' section.
