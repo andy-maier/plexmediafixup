@@ -3,13 +3,13 @@ Fixup sync_sort_title.
 """
 
 from __future__ import print_function, absolute_import
-from .._fixup import Fixup
-from .._reuse.unicode import ensure_bytes
 import re
 import json
 import six
 import plexapi
 import plexapi.exceptions
+from plexmediafixup.fixup import Fixup
+from plexmediafixup.utils.unicode import ensure_bytes
 
 
 class SyncSortTitle(Fixup):

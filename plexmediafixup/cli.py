@@ -13,10 +13,10 @@ import six
 import plexapi
 import plexapi.myplex
 import plexapi.exceptions
-from ._reuse.smart_formatter import SmartFormatter
-from ._reuse.config_file import ConfigFile, ConfigFileError
-from ._fixup import FixupManager
-from ._version import __version__
+from .utils.smart_formatter import SmartFormatter
+from .utils.config_file import ConfigFile, ConfigFileError
+from .fixup import FixupManager
+from . import __version__
 
 
 # JSON schema describing the structure of config files
