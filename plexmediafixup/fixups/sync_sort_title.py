@@ -67,12 +67,15 @@ class SyncSortTitle(Fixup):
                 continue
             if section_pattern is not None and \
                     re.search(section_pattern, section.title) is None:
+                if verbose:
+                    print("Skipping {s.type} library section {s.title!r} "
+                          "that does not match the specified pattern".
+                          format(s=section))
                 continue
 
-            if verbose:
-                print("Processing library section of type {s.type}: "
-                      "{s.title!r}".
-                      format(s=section))
+            print("Processing library section of type {s.type}: "
+                  "{s.title!r}".
+                  format(s=section))
 
             items = section.all()
             for item in items:
@@ -105,6 +108,10 @@ def process_item(dryrun, verbose, item):
 
     # If the item has no title, we cannot sync from it
     if not item.title:
+        if verbose:
+            print("Skipping {i.type} item that has no title set: "
+            "id {i.ratingKey}, sort title {i.titleSort!r}".
+                  format(i=item))
         return 0
 
     # If the sort title field is already synced, nothing needs to be done
