@@ -1,7 +1,7 @@
 """
 Fixup that walks through the movie, show and episode items of the configured
-library sections, and syncs the the sort title field by setting it to the value
-of the title field.
+library sections, and syncs the "sort title" field by setting it to the value of
+the "title" field.
 """
 
 from __future__ import print_function, absolute_import
@@ -16,7 +16,7 @@ from plexmediafixup.utils.unicode import ensure_bytes
 
 
 fixup_name = os.path.splitext(os.path.basename(__file__))[0]
-print("Denbug: fixup_name=%r" % fixup_name)
+print("Debug: fixup_name=%r" % fixup_name)
 
 
 class SyncSortTitle(Fixup):
@@ -25,7 +25,7 @@ class SyncSortTitle(Fixup):
         super(SyncSortTitle, self).__init__(fixup_name)
 
     def run(self, plex, dryrun, verbose, section_types=None,
-            section_title_pattern=None):
+            section_pattern=None):
         """
         Standard parameters:
 
@@ -43,11 +43,11 @@ class SyncSortTitle(Fixup):
             episodes will be processed. A value of None (null in config file)
             means to process all valid section types. Optional, default is None.
 
-          section_title_pattern (string):
+          section_pattern (string):
             Regex pattern defining library section names that should be
             processed within the configured section types. A value of None
             (null in config file) means to process all library sections of the
-            specified types. Optional, default is None.
+            configured types. Optional, default is None.
         """
 
         if section_types is None:
@@ -65,8 +65,8 @@ class SyncSortTitle(Fixup):
 
             if section.type not in section_types:
                 continue
-            if section_title_pattern is not None and \
-                    re.search(section_title_pattern, section.title) is None:
+            if section_pattern is not None and \
+                    re.search(section_pattern, section.title) is None:
                 continue
 
             if verbose:

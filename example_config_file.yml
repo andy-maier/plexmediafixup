@@ -1,6 +1,4 @@
 # plexmediafixup config file
-#
-# Note: This is an example file that should be copied and updated as needed.
 
 # Path name of PlexAPI config file. Omitting this value or specifying null
 # causes the default to be used (i.e. env var PLEXAPI_CONFIG_PATH or
@@ -20,11 +18,37 @@ direct_connection: true
 # Plex web GUI. This parameter is only required for indirect connection.
 server_name: "SERVERNAME"
 
+# List of fixups that should be processed. Fixups can be specified more than
+# once. The enabled fixups in this list will be processed in order.
+#
+# Each fixup has the following general parameters:
+#
+# * name: Name of the fixup. This is the module name (= base file name) in the
+#   plexmediafixup/fixups directory. Required.
+#
+# * enabled: Boolean fLag controlling whether the fixup should run. Required.
+#
+# * kwargs: An object with fixup-specific parameters that are passed to the
+#   fixup. These parameters are described below for each fixup.
+#
 fixups:
 
+  # Fixup that walks through the movie, show and episode items of the configured
+  # library sections, and syncs the sort title field by setting it to the value
+  # of the title field.
   - name: sync_sort_title
     enabled: true
     kwargs:
-      section_types: [movie, show]
-      section_title_pattern: '.*'
-      title_pattern: '.*'
+
+      # String or list of strings that specify the library section types that
+      # should be processed. Valid values are: 'movie', 'show'. For 'show',
+      # both the show item itself and its episodes will be processed. A value
+      # null means to process all valid section types. Optional, default is
+      # null.
+      section_types: null
+
+      # String that specifies a regex pattern defining library section names
+      # that should be processed within the configured section types. A value
+      # of null means to process all library sections of the configured types.
+      # Optional, default is null.
+      section_pattern: null

@@ -218,9 +218,7 @@ install:
 script:
 # make build is always run in order to verify the package version determination
   - make build
-  - if [[ -n $_MANUAL_CI_RUN ]]; then make builddoc; fi
   - make check
-  # - if [[ -n $_MANUAL_CI_RUN ]]; then make pylint; fi
   - make pylint
   - make test
 

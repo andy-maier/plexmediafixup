@@ -169,26 +169,6 @@ package_py_files := \
     $(wildcard $(package_name)/*.py) \
     $(wildcard $(package_name)/*/*.py) \
 
-# Directory for generated API documentation
-doc_build_dir := build_doc
-
-# Directory where Sphinx conf.py and the docs source files is located
-doc_dir := docs
-
-# Paper format for the Sphinx LaTex/PDF builder.
-# Valid values: a4, letter
-doc_paper_format := a4
-
-# Documentation generator command
-doc_cmd := sphinx-build
-doc_opts := -v -d $(doc_build_dir)/doctrees -c $(doc_dir) -D latex_elements.papersize=$(doc_paper_format) .
-
-# Dependents for Sphinx documentation build
-doc_dependent_files := \
-    $(doc_dir)/conf.py \
-    $(wildcard $(doc_dir)/*.rst) \
-		$(wildcard $(package_name)/*.py) \
-
 # PyLint config file
 pylint_rc_file := pylintrc
 
@@ -239,7 +219,6 @@ help:
 	@echo "  install    - Install $(package_name) (as editable) and its dependent packages"
 	@echo "  develop    - Set up development of $(project_name) project"
 	@echo "  build      - Build the distribution archive files in: $(dist_dir)"
-	@echo "  builddoc   - Build documentation in: $(doc_build_dir)"
 	@echo "  check      - Run Flake8 on Python sources"
 	@echo "  pylint     - Run PyLint on Python sources"
 	@echo "  test       - Run unit tests"
@@ -362,10 +341,6 @@ develop_$(python_mn_version).done: pip_upgrade_$(python_mn_version).done install
 build: $(bdist_file) $(sdist_file)
 	@echo "Makefile: Target $@ done."
 
-.PHONY: builddoc
-builddoc: html
-	@echo "Makefile: Target $@ done."
-
 .PHONY: check
 check: flake8_$(python_mn_version).done safety_$(python_mn_version).done
 	@echo "Makefile: Target $@ done."
@@ -375,14 +350,14 @@ pylint: pylint_$(python_mn_version).done
 	@echo "Makefile: Target $@ done."
 
 .PHONY: all
-all: install develop build builddoc check pylint test
+all: install develop build check pylint test
 	@echo "Makefile: Target $@ done."
 
 .PHONY: clobber
 clobber: clean
 	@echo "Makefile: Removing everything for a fresh start"
 	-$(call RM_FUNC,*.done $(dist_files) $(dist_dir)/$(package_name)-$(package_version)*.egg $(package_name)/*cover)
-	-$(call RMDIR_FUNC,$(doc_build_dir) .tox $(coverage_html_dir))
+	-$(call RMDIR_FUNC,.tox $(coverage_html_dir))
 	@echo "Makefile: Done removing everything for a fresh start"
 	@echo "Makefile: Target $@ done."
 
@@ -404,57 +379,6 @@ upload: _check_version $(dist_files)
 	@echo "Makefile: Uploading to PyPI: $(package_name) $(package_version)"
 	twine upload $(dist_files)
 	@echo "Makefile: Done uploading to PyPI"
-	@echo "Makefile: Target $@ done."
-
-.PHONY: html
-html: develop_$(python_mn_version).done $(doc_build_dir)/html/docs/index.html
-	@echo "Makefile: Target $@ done."
-
-$(doc_build_dir)/html/docs/index.html: Makefile $(doc_dependent_files)
-	@echo "Makefile: Creating the documentation as HTML pages"
-	-$(call RM_FUNC,$@)
-	$(doc_cmd) -b html $(doc_opts) $(doc_build_dir)/html
-	@echo "Makefile: Done creating the documentation as HTML pages; top level file: $@"
-
-.PHONY: pdf
-pdf: develop_$(python_mn_version).done Makefile $(doc_dependent_files)
-	@echo "Makefile: Creating the documentation as PDF file"
-	-$(call RM_FUNC,$@)
-	$(doc_cmd) -b latex $(doc_opts) $(doc_build_dir)/pdf
-	@echo "Makefile: Running LaTeX files through pdflatex..."
-	$(MAKE) -C $(doc_build_dir)/pdf all-pdf
-	@echo "Makefile: Done creating the documentation as PDF file in: $(doc_build_dir)/pdf/"
-	@echo "Makefile: Target $@ done."
-
-.PHONY: man
-man: develop_$(python_mn_version).done Makefile $(doc_dependent_files)
-	@echo "Makefile: Creating the documentation as man pages"
-	-$(call RM_FUNC,$@)
-	$(doc_cmd) -b man $(doc_opts) $(doc_build_dir)/man
-	@echo "Makefile: Done creating the documentation as man pages in: $(doc_build_dir)/man/"
-	@echo "Makefile: Target $@ done."
-
-.PHONY: docchanges
-docchanges: develop_$(python_mn_version).done
-	@echo "Makefile: Creating the doc changes overview file"
-	$(doc_cmd) -b changes $(doc_opts) $(doc_build_dir)/changes
-	@echo
-	@echo "Makefile: Done creating the doc changes overview file in: $(doc_build_dir)/changes/"
-	@echo "Makefile: Target $@ done."
-
-.PHONY: doclinkcheck
-doclinkcheck: develop_$(python_mn_version).done
-	@echo "Makefile: Creating the doc link errors file"
-	$(doc_cmd) -b linkcheck $(doc_opts) $(doc_build_dir)/linkcheck
-	@echo
-	@echo "Makefile: Done creating the doc link errors file: $(doc_build_dir)/linkcheck/output.txt"
-	@echo "Makefile: Target $@ done."
-
-.PHONY: doccoverage
-doccoverage: develop_$(python_mn_version).done
-	@echo "Makefile: Creating the doc coverage results file"
-	$(doc_cmd) -b coverage $(doc_opts) $(doc_build_dir)/coverage
-	@echo "Makefile: Done creating the doc coverage results file: $(doc_build_dir)/coverage/python.txt"
 	@echo "Makefile: Target $@ done."
 
 # Note: distutils depends on the right files specified in MANIFEST.in, even when
