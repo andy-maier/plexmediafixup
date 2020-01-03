@@ -450,7 +450,7 @@ endif
 .PHONY: test
 test: $(test_deps)
 	@echo "Makefile: Running unit tests"
-	py.test --color=yes --cov $(package_name) $(coverage_report) --cov-config coveragerc $(pytest_warning_opts) $(pytest_opts) tests/unittest tests/functiontest -s
+	py.test --color=yes --cov $(package_name) $(coverage_report) --cov-config coveragerc $(pytest_warning_opts) $(pytest_opts) tests/unittest -s
 	@echo "Makefile: Done running unit tests"
 
 .PHONY: end2end

@@ -33,8 +33,8 @@ CONFIG_FILE_SCHEMA = {
             "$id": "#/properties/plexapi_config_path",
             "type": ["null", "string"],
             "title": "Path name of PlexAPI config file. Specifying null causes "
-            "the default to be used (i.e. env var PLEXAPI_CONFIG_PATH or "
-            "~/.config/plexapi/config.ini)",
+                     "the default to be used (i.e. env var PLEXAPI_CONFIG_PATH "
+                     "or ~/.config/plexapi/config.ini)",
             "examples": [
                 "null", "my-plexapi-config.ini"
             ],
@@ -43,12 +43,14 @@ CONFIG_FILE_SCHEMA = {
             "$id": "#/properties/direct_connection",
             "type": "boolean",
             "title": "Flag controlling whether connection is directly to the "
-            "Plex Media Server (true) or indirectly via the plex.tv web site "
-            "(false). Using direct connection requires the PlexAPI config "
-            "file parameters auth.server_baseurl and auth.server_token to be "
-            "set. Using indirect connection requires the PlexAPI config file "
-            "parameters auth.myplex_username and auth.myplex_password to be "
-            "set, as well as the server_name parameter in this config file.",
+                     "Plex Media Server (true) or indirectly via the Plex web "
+                     "site (false). Using direct connection requires the "
+                     "PlexAPI config file parameters auth.server_baseurl and "
+                     "auth.server_token to be set. Using indirect connection "
+                     "requires the PlexAPI config file parameters "
+                     "auth.myplex_username and auth.myplex_password to be set, "
+                     "as well as the server_name parameter in this config "
+                     "file.",
             "examples": [
                 "true", "false"
             ],
@@ -58,9 +60,9 @@ CONFIG_FILE_SCHEMA = {
             "type": ["null", "string"],
             "default": None,
             "title": "Server name of the Plex Media Server. This is not the "
-            "IP address or host name, but the server name that can be found "
-            "in the top left corner of the Plex web GUI. This parameter is "
-            "only required for indirect connection.",
+                     "IP address or host name, but the server name that can be "
+                     "found in the top left corner of the Plex web GUI. This "
+                     "parameter is only required for indirect connection.",
             "examples": [
                 "MyPlex"
             ],
@@ -83,28 +85,28 @@ CONFIG_FILE_SCHEMA = {
                         "$id": "#/properties/fixups/items/properties/name",
                         "type": "string",
                         "title": "Name of the fixup (unique within config "
-                        "file)",
+                                 "file)",
                         "examples": [
                             "example_fixup"
                         ],
                     },
                     "enabled": {
                         "$id": "#/properties/fixups/items/"
-                        "properties/enabled",
+                               "properties/enabled",
                         "type": "boolean",
                         "title": "Flag controlling whether the fixup is "
-                        "enabled (i.e. will run)",
+                                 "enabled (i.e. will run)",
                         "examples": [
                             "true", "false"
                         ],
                     },
                     "kwargs": {
                         "$id": "#/properties/fixups/items/"
-                        "properties/kwargs",
+                               "properties/kwargs",
                         "type": "object",
                         "default": [],
                         "title": "Keyword arguments for passing on to the "
-                        "fixup",
+                                 "fixup",
                     },
                 }
             }
