@@ -5,8 +5,8 @@ PlexMediaFixup - Run configurable fixups against the media database of a Plex Me
     :target: https://pypi.python.org/pypi/plexmediafixup/
     :alt: Version on Pypi
 
-.. image:: https://travis-ci.org/plexmediafixup/plexmediafixup.svg?branch=master
-    :target: https://travis-ci.org/plexmediafixup/plexmediafixup
+.. image:: https://travis-ci.org/andy-maier/plexmediafixup.svg?branch=master
+    :target: https://travis-ci.org/andy-maier/plexmediafixup
     :alt: Travis test status (master)
 
 .. # .. image:: https://ci.appveyor.com/api/projects/status/i022iaeu3dao8j5x/branch/master?svg=true
