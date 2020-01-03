@@ -1,7 +1,7 @@
 """
 Fixup that walks through the movie, show and episode items of the configured
-library sections, and syncs the "sort title" field by setting it to the value of
-the "title" field.
+library sections, and syncs the "sort title" field of each item by setting it
+to the value of its "title" field.
 """
 
 from __future__ import print_function, absolute_import

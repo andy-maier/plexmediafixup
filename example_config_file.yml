@@ -18,24 +18,24 @@ direct_connection: true
 # Plex web GUI. This parameter is only required for indirect connection.
 server_name: "SERVERNAME"
 
-# List of fixups that should be processed. Fixups can be specified more than
-# once. The enabled fixups in this list will be processed in order.
+# List of fixups that should be run. Fixups can be specified more than once.
+# The enabled fixups in this list will be run, in order.
 #
 # Each fixup has the following general parameters:
 #
 # * name: Name of the fixup. This is the module name (= base file name) in the
 #   plexmediafixup/fixups directory. Required.
 #
-# * enabled: Boolean fLag controlling whether the fixup should run. Required.
+# * enabled: Boolean flag controlling whether the fixup should run. Required.
 #
-# * kwargs: An object with fixup-specific parameters that are passed to the
-#   fixup. These parameters are described below for each fixup.
+# * kwargs: An object (=dict) with fixup-specific parameters that are passed
+#   to the fixup. These parameters are described below for each fixup.
 #
 fixups:
 
-  # Fixup that walks through the movie, show and episode items of the configured
-  # library sections, and syncs the sort title field by setting it to the value
-  # of the title field.
+  # sync_sort_title is a fixup that walks through the movie, show and episode
+  # items of the configured library sections, and syncs the "sort title" field
+  # of each item by setting it to the value of its "title" field.
   - name: sync_sort_title
     enabled: true
     kwargs:
