@@ -10,6 +10,7 @@ import inspect
 
 
 class FixupManager(object):
+    # pylint: disable=too-few-public-methods
     """
     Manager class for fixups.
 
@@ -49,15 +50,16 @@ class FixupManager(object):
             rel_name = '.' + name
             fixup_module = importlib.import_module(
                 rel_name, package=self._fixup_package_path)
-            for name, obj in inspect.getmembers(fixup_module):
-                if inspect.isclass(obj) and \
-                        issubclass(obj, Fixup) and obj != Fixup:
-                    fixup_object = obj()
-                    self._fixup_objects[name] = fixup_object
+            for _name, _obj in inspect.getmembers(fixup_module):
+                if inspect.isclass(_obj) and \
+                        issubclass(_obj, Fixup) and _obj != Fixup:
+                    fixup_object = _obj()
+                    self._fixup_objects[_name] = fixup_object
                     return fixup_object
 
 
 class Fixup(object):
+    # pylint: disable=too-few-public-methods
     """
     Base class for fixup classes in fixup modules.
     """

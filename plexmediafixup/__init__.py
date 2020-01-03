@@ -9,7 +9,7 @@ Plex Media Server
 from __future__ import absolute_import
 import sys
 
-from .version import __version__
+from .version import __version__  # noqa: F401
 
 _PY_M = sys.version_info[0]
 _PY_N = sys.version_info[1]
