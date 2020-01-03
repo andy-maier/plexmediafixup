@@ -145,7 +145,7 @@ endif
 coverage_html_dir := coverage_html
 
 # Package version (full version, including any pre-release suffixes, e.g. "0.1.0.dev1").
-# Note: The package version is defined in _version.py.
+# Note: The package version is defined in version.py.
 package_version := $(shell $(PYTHON_CMD) setup.py --version)
 
 # Python versions and bit size

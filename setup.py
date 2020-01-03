@@ -55,7 +55,7 @@ install_requires = [req for req in requirements
                     if req and not re.match(r'[^:]+://', req)]
 dependency_links = [req for req in requirements
                     if req and re.match(r'[^:]+://', req)]
-package_version = get_version(os.path.join('plexmediafixup', '__init__.py'))
+package_version = get_version(os.path.join('plexmediafixup', 'version.py'))
 
 # Docs on setup():
 # * https://docs.python.org/2.7/distutils/apiref.html?

@@ -9,14 +9,7 @@ Plex Media Server
 from __future__ import absolute_import
 import sys
 
-#: The full version of this package including any development levels, as a
-#: :term:`string`.
-#:
-#: Possible formats for this version string are:
-#:
-#: * "M.N.P.dev1": Development level 1 of a not yet released version M.N.P
-#: * "M.N.P": A released version M.N.P
-__version__ = '0.1.0.dev1'
+from .version import __version__
 
 _PY_M = sys.version_info[0]
 _PY_N = sys.version_info[1]
