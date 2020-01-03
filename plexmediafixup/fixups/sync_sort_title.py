@@ -5,6 +5,7 @@ to the value of its "title" field.
 """
 
 from __future__ import print_function, absolute_import
+import os
 import re
 import json
 import six
@@ -15,14 +16,13 @@ from plexmediafixup.fixup import Fixup
 from plexmediafixup.utils.unicode import ensure_bytes
 
 
-fixup_name = os.path.splitext(os.path.basename(__file__))[0]
-print("Debug: fixup_name=%r" % fixup_name)
+FIXUP_NAME = os.path.splitext(os.path.basename(__file__))[0]
 
 
 class SyncSortTitle(Fixup):
 
     def __init__(self):
-        super(SyncSortTitle, self).__init__(fixup_name)
+        super(SyncSortTitle, self).__init__(FIXUP_NAME)
 
     def run(self, plex, dryrun, verbose, section_types=None,
             section_pattern=None):
@@ -58,7 +58,7 @@ class SyncSortTitle(Fixup):
             if st not in ['movie', 'show']:
                 print("Error: Invalid section type specified for fixup "
                       "{fixup}: {type}".
-                      format(fixup=fixup_name, type=st))
+                      format(fixup=FIXUP_NAME, type=st))
                 return 1
 
         for section in plex.library.sections():
