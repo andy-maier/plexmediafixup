@@ -24,7 +24,6 @@ fixups:
 
   - name: sync_sort_title
     enabled: true
-    dryrun: true
     kwargs:
       section_types: [movie, show]
       section_title_pattern: '.*'

@@ -76,7 +76,6 @@ CONFIG_FILE_SCHEMA = {
                 "required": [
                     "name",
                     "enabled",
-                    "dryrun",
                 ],
                 "additionalProperties": False,
                 "properties": {
@@ -95,17 +94,6 @@ CONFIG_FILE_SCHEMA = {
                         "type": "boolean",
                         "title": "Flag controlling whether the fixup is "
                         "enabled (i.e. will run)",
-                        "examples": [
-                            "true", "false"
-                        ],
-                    },
-                    "dryrun": {
-                        "$id": "#/properties/fixups/items/"
-                        "properties/dryrun",
-                        "type": "boolean",
-                        "title": "Flag passed to the fixup controlling "
-                        "whether it actually performs its work vs just "
-                        "reporting it",
                         "examples": [
                             "true", "false"
                         ],
@@ -157,6 +145,10 @@ def parse_args():
         '-v', '--verbose', dest='verbose',
         action='store_true', default=False,
         help='Print more messages while processing')
+    general_arggroup.add_argument(
+        '-n', '--dryrun', dest='dryrun',
+        action='store_true', default=False,
+        help='Run fixups in dryrun mode (Print what would be done)')
     general_arggroup.add_argument(
         '--version', dest='version',
         action='store_true', default=False,
@@ -220,12 +212,10 @@ def main():
     for fixup in fixups:
         name = fixup['name']  # required item
         enabled = fixup['enabled']  # required item
-        dryrun = fixup['dryrun']  # optional but defaulted item
         if enabled:
-            fixup_mgr.get_fixup(name)
             if args.verbose:
-                print("Loaded fixup: {name} (dryrun={dryrun})".
-                      format(name=name, dryrun=dryrun))
+                print("Loading fixup: {name}".format(name=name))
+            fixup_mgr.get_fixup(name)
 
     if direct_connection:
 
@@ -306,7 +296,7 @@ def main():
     for fixup in fixups:
         name = fixup['name']  # required item
         enabled = fixup['enabled']  # required item
-        dryrun = fixup['dryrun']  # optional but defaulted item
+        dryrun = args.dryrun
         kwargs = fixup.get('kwargs', dict())
         if enabled:
             fixup = fixup_mgr.get_fixup(name)
