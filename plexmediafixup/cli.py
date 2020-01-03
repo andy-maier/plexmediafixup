@@ -6,10 +6,7 @@ plexmediafixup script. Invoke with --help for usage.
 from __future__ import print_function, absolute_import
 
 import sys
-from pprint import pprint
 import argparse
-import json
-import six
 import plexapi
 import plexapi.myplex
 import plexapi.exceptions
@@ -188,6 +185,8 @@ def main():
         print("{v}".format(v=__version__))
         return 0
 
+    config = ConfigFile(args.config_file, CONFIG_FILE_SCHEMA)
+
     if args.help_config:
         print(config.help())
         return 0
@@ -199,7 +198,6 @@ def main():
     if args.verbose:
         print("Using plexmediafixup config file: {file}".
               format(file=args.config_file))
-    config = ConfigFile(args.config_file, CONFIG_FILE_SCHEMA)
     try:
         config.load()
     except ConfigFileError as exc:
