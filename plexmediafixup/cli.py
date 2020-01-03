@@ -189,9 +189,8 @@ def main():
         print("Error: Config file must be specified.")
         return 1
 
-    if args.verbose:
-        print("Using plexmediafixup config file: {file}".
-              format(file=args.config_file))
+    print("Using plexmediafixup config file: {file}".
+          format(file=args.config_file))
     try:
         config.load()
     except ConfigFileError as exc:
@@ -205,9 +204,8 @@ def main():
 
     if not plexapi_config_path:
         plexapi_config_path = plexapi.CONFIG_PATH
-    if args.verbose:
-        print("Using PlexAPI config file: {file}".
-              format(file=plexapi_config_path))
+    print("Using PlexAPI config file: {file}".
+          format(file=plexapi_config_path))
     plexapi_config = plexapi.config.PlexConfig(plexapi_config_path)
 
     # Verify that the fixups can be loaded
@@ -215,8 +213,7 @@ def main():
         name = fixup['name']  # required item
         enabled = fixup['enabled']  # required item
         if enabled:
-            if args.verbose:
-                print("Loading fixup: {name}".format(name=name))
+            print("Loading fixup: {name}".format(name=name))
             fixup_mgr.get_fixup(name)
 
     if direct_connection:
@@ -244,9 +241,8 @@ def main():
                   format(url=server_baseurl, msg=exc))
             return 1
 
-        if args.verbose:
-            print("Connected directly to Plex Media Server at {url}".
-                  format(url=server_baseurl))
+        print("Connected directly to Plex Media Server at {url}".
+              format(url=server_baseurl))
 
     else:
 
@@ -289,9 +285,8 @@ def main():
                   format(srv=server_name, user=myplex_username, msg=exc))
             return 1
 
-        if args.verbose:
-            print("Connected indirectly to server {srv} of Plex account {user}".
-                  format(srv=server_name, user=myplex_username))
+        print("Connected indirectly to server {srv} of Plex account {user}".
+              format(srv=server_name, user=myplex_username))
 
     plexapi.TIMEOUT = 300
 
@@ -302,18 +297,16 @@ def main():
         kwargs = fixup.get('kwargs', dict())
         if enabled:
             fixup = fixup_mgr.get_fixup(name)
-            if args.verbose:
-                print("Executing fixup: {name} (dryrun={dryrun})".
-                      format(name=name, dryrun=dryrun))
+            print("Executing fixup: {name} (dryrun={dryrun})".
+                  format(name=name, dryrun=dryrun))
             rc = fixup.run(plex=plex, dryrun=dryrun, verbose=args.verbose,
                            **kwargs)
             if rc:
                 print("Error: Fixup {name} has encountered errors - aborting".
                       format(name=name))
                 return 1
-            if args.verbose:
-                print("Fixup succeeded: {name} (dryrun={dryrun})".
-                      format(name=name, dryrun=dryrun))
+            print("Fixup succeeded: {name} (dryrun={dryrun})".
+                  format(name=name, dryrun=dryrun))
 
     return 0
 
