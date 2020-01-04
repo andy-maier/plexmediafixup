@@ -24,8 +24,8 @@ class SyncSortTitle(Fixup):
     def __init__(self):
         super(SyncSortTitle, self).__init__(FIXUP_NAME)
 
-    def run(self, plex, dryrun, verbose, section_types=None,
-            section_pattern=None):
+    def run(self, plex, dryrun, verbose, path_mappings,
+            section_types=None, section_pattern=None):
         """
         Standard parameters:
 
@@ -34,6 +34,9 @@ class SyncSortTitle(Fixup):
           dryrun (bool): Dryrun flag.
 
           verbose (bool): Verbose flag.
+
+          path_mappings (list(dict(server=strng, local=string))): File path
+            mappings between PMS server and local system.
 
         Fixup-specific parameters (kwargs in config):
 

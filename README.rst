@@ -29,6 +29,17 @@ The functionality to perform these changes is organized in plugins called
 
 Currently supported fixups are:
 
+* sync_title:
+
+  This fixup walks through the movie and episode items of the configured
+  library sections of the Plex Media Server, and syncs the "title" field of
+  each item by setting it to the value of the title tag found in the
+  corresponding media files. The ffprobe command is used to get the title
+  tag from the media files.
+
+  Use this fixup if you properly maintain the title tags in your media files
+  and are not happy with the titles that get set from the metadata sites.
+
 * sync_sort_title:
 
   This fixup walks through the movie, show and episode items of the configured
@@ -108,6 +119,13 @@ Installation and configuration
     configured to process all items. However, please review your copy
     carefully and make changes as needed.
 
+4. Install the ffprobe and ffmpeg commands
+
+   These commands are only used by the sync_title fixup.
+
+   On Windows with Chocolatey, on MacOS with HomeBrew, and on most Linux
+   distros, the package containing these commands is named ``ffmpeg``.
+   Alternatively, download it from https://ffmpeg.org/download.html.
 
 Usage
 -----

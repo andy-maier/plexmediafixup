@@ -67,6 +67,48 @@ CONFIG_FILE_SCHEMA = {
                 "MyPlex"
             ],
         },
+        "path_mappings": {
+            "$id": "#/properties/path_mappings",
+            "type": "array",
+            "title": "List of file path mappings between the file system seen "
+                     "by the Plex Media Server and the file system seen by "
+                     "the plexmediafixup command. A value of null means there "
+                     "is no file path mapping needed. The file path mappings "
+                     "in this list are processed in the specified order when "
+                     "mapping a file path.",
+            "default": [],
+            "items": {
+                "$id": "#/properties/path_mappings/items",
+                "type": "object",
+                "required": [
+                    "server",
+                    "local",
+                ],
+                "additionalProperties": False,
+                "properties": {
+                    "server": {
+                        "$id": "#/properties/path_mappings/items/properties/"
+                               "server",
+                        "type": "string",
+                        "title": "File path root in the file system seen by "
+                                 "the Plex Media Server",
+                        "examples": [
+                            "/volume2/share"
+                        ],
+                    },
+                    "local": {
+                        "$id": "#/properties/path_mappings/items/properties/"
+                               "local",
+                        "type": "string",
+                        "title": "File path root in the file system seen by "
+                                 "the plexmediafixup command",
+                        "examples": [
+                            "/Volumes/share"
+                        ],
+                    },
+                }
+            }
+        },
         "fixups": {
             "$id": "#/properties/fixups",
             "type": "array",
@@ -199,6 +241,7 @@ def main():
     plexapi_config_path = config.data['plexapi_config_path']  # required item
     direct_connection = config.data['direct_connection']  # required item
     server_name = config.data['server_name']  # optional but defaulted item
+    path_mappings = config.data['path_mappings']  # optional but defaulted item
     fixups = config.data['fixups']  # optional but defaulted item
     fixup_mgr = FixupManager()
 
@@ -300,7 +343,7 @@ def main():
             print("Executing fixup: {name} (dryrun={dryrun})".
                   format(name=name, dryrun=dryrun))
             rc = fixup.run(plex=plex, dryrun=dryrun, verbose=args.verbose,
-                           **kwargs)
+                           path_mappings=path_mappings, **kwargs)
             if rc:
                 print("Error: Fixup {name} has encountered errors - aborting".
                       format(name=name))
