@@ -119,12 +119,12 @@ Installation and configuration
     configured to process all items. However, please review your copy
     carefully and make changes as needed.
 
-4. Install the ffprobe and ffmpeg commands
+4. Install the ffprobe command
 
-   These commands are only used by the sync_title fixup.
+   This command is only used by the sync_title fixup.
 
    On Windows with Chocolatey, on MacOS with HomeBrew, and on most Linux
-   distros, the package containing these commands is named ``ffmpeg``.
+   distros, the package containing this command is named ``ffmpeg``.
    Alternatively, download it from https://ffmpeg.org/download.html.
 
 Usage
