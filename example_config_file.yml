@@ -1,12 +1,12 @@
 # plexmediafixup config file
 
 # Path name of PlexAPI config file. Omitting this value or specifying null
-# causes the default to be used (i.e. env var PLEXAPI_CONFIG_PATH or
+# causes the PlexAPI default to be used (i.e. env var PLEXAPI_CONFIG_PATH or
 # ~/.config/plexapi/config.ini).
 plexapi_config_path: null
 
 # Flag controlling whether connection is directly to the Plex Media Server
-# (true) or indirectly via the plex.tv web site (false). Using direct
+# (true) or indirectly via the Plex web site (false). Using direct
 # connection requires the PlexAPI config file parameters auth.server_baseurl
 # and auth.server_token to be set. Using indirect connection requires the
 # PlexAPI config file parameters auth.myplex_username and auth.myplex_password
@@ -27,8 +27,8 @@ path_mappings:
   - server: /
     local: /
 
-# List of fixups that should be run. Fixups can be specified more than once.
-# The enabled fixups in this list will be run, in order.
+# List of fixups. The same fixup can be specified more than once. The enabled
+# fixups in this list will be run in the specified order.
 #
 # Each fixup has the following general parameters:
 #
@@ -52,8 +52,9 @@ fixups:
 
       # String or list of strings that specify the library section types that
       # should be processed. Valid values are: 'movie', 'show'. For 'show',
-      # only its episodes will be processed. A value null means to process all
-      # valid section types. Optional, default is null.
+      # only the episode items of the show items will be processed, but not the
+      # show items themselves. A value of null means to process all valid
+      # section types. Optional, default is null.
       section_types: null
 
       # String that specifies a regex pattern defining library section names
@@ -71,9 +72,9 @@ fixups:
 
       # String or list of strings that specify the library section types that
       # should be processed. Valid values are: 'movie', 'show'. For 'show',
-      # both the show item itself and its episodes will be processed. A value
-      # null means to process all valid section types. Optional, default is
-      # null.
+      # both the show items themselves and their episode items will be
+      # processed. A value of null means to process all valid section types.
+      # Optional, default is null.
       section_types: null
 
       # String that specifies a regex pattern defining library section names
