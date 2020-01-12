@@ -82,3 +82,11 @@ fixups:
       # of null means to process all library sections of the configured types.
       # Optional, default is null.
       section_pattern: null
+
+      # Boolean that controls whether the sort title will be translated to
+      # 7-bit ASCII using the unidecode package.
+      as_ascii: true
+
+      # Boolean that controls whether special characters will be removed from
+      # the sort title.
+      remove_specials: true

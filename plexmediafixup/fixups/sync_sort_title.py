@@ -1,7 +1,9 @@
 """
 Fixup that walks through the movie, show and episode items of the configured
 library sections, and syncs the "sort title" field of each item by setting it
-to the value of its "title" field.
+to the value of its "title" field. Optionally, non-ASCII characters can be
+normalized to corresponding ASCII characters, and special characters can be
+removed.
 """
 
 from __future__ import print_function, absolute_import
@@ -9,14 +11,39 @@ import os
 import re
 import json
 import six
+from unidecode import unidecode
 import plexapi
 import plexapi.exceptions
 import plexapi.utils
 from plexmediafixup.fixup import Fixup
-from plexmediafixup.utils.unicode import ensure_bytes
+from plexmediafixup.utils.unicode import ensure_bytes, ensure_unicode
 
 
 FIXUP_NAME = os.path.splitext(os.path.basename(__file__))[0]
+
+# Translation table for special characters that are replaced with space
+SPECIALS = u"^()[]{}!.,-+*$'~%&=?!#;:_"
+SPECIALS_TABLE = dict()
+for c in SPECIALS:
+    SPECIALS_TABLE[ord(c)] = u' '
+
+
+def title_sort(title, as_ascii, remove_specials):
+    """
+    Return the new sort title from the title.
+    """
+    ret_title = ensure_unicode(title)
+
+    if as_ascii:
+        ret_title = ensure_unicode(unidecode(ret_title))
+
+    if remove_specials:
+        ret_title = ret_title.translate(SPECIALS_TABLE)
+
+    ret_title = ret_title.replace(u'  ', u' ').replace(u'  ', u' '). \
+        replace(u'  ', u' ').strip()
+
+    return ret_title
 
 
 class SyncSortTitle(Fixup):
@@ -25,7 +52,8 @@ class SyncSortTitle(Fixup):
         super(SyncSortTitle, self).__init__(FIXUP_NAME)
 
     def run(self, plex, dryrun, verbose, path_mappings,
-            section_types=None, section_pattern=None):
+            section_types=None, section_pattern=None, as_ascii=False,
+            remove_specials=False):
         """
         Standard parameters:
 
@@ -51,6 +79,14 @@ class SyncSortTitle(Fixup):
             processed within the configured section types. A value of None
             (null in config file) means to process all library sections of the
             configured types. Optional, default is None.
+
+          as_ascii (bool):
+            Boolean that controls whether the sort title is translated to
+            7-bit ASCII characters using unidecode. Optional, default is False.
+
+          remove_specials (bool):
+            Boolean that controls whether special characters in the sort title
+            will be remplaced with space. Optional, default is False.
         """
 
         if section_types is None:
@@ -83,16 +119,19 @@ class SyncSortTitle(Fixup):
             items = section.all()
             for item in items:
                 if item.type == 'movie':
-                    rc = process_item(dryrun, verbose, item)
+                    rc = process_item(dryrun, verbose, item, as_ascii,
+                                      remove_specials)
                     if rc:
                         return rc
                 elif item.type == 'show':
-                    rc = process_item(dryrun, verbose, item)
+                    rc = process_item(dryrun, verbose, item, as_ascii,
+                                      remove_specials)
                     if rc:
                         return rc
                     ep_items = item.episodes()
                     for ep_item in ep_items:
-                        rc = process_item(dryrun, verbose, ep_item)
+                        rc = process_item(dryrun, verbose, ep_item, as_ascii,
+                                          remove_specials)
                         if rc:
                             return rc
                 else:
@@ -104,7 +143,7 @@ class SyncSortTitle(Fixup):
         return 0
 
 
-def process_item(dryrun, verbose, item):
+def process_item(dryrun, verbose, item, as_ascii, remove_specials):
     """
     Process one movie, show or episode item
     """
@@ -117,21 +156,21 @@ def process_item(dryrun, verbose, item):
                   format(i=item))
         return 0
 
+    new_title_sort = title_sort(item.title, as_ascii, remove_specials)
+
     # If the sort title field is already synced, nothing needs to be done
-    if item.titleSort == item.title:
+    if item.titleSort == new_title_sort:
         return 0
 
     dryrun_str = "Dryrun: " if dryrun else ""
 
-    if verbose:
-        print("{d}Syncing sort title field of {i.type} item "
-              "{i.title!r} (was: {i.titleSort!r})".
-              format(d=dryrun_str, i=item))
+    print("{d}Changing sort title field of {i.type} {i.title!r} from "
+          "{i.titleSort!r} to {new!r}".
+          format(d=dryrun_str, i=item, new=new_title_sort))
 
     if not dryrun:
 
         # Change the sort title field
-        new_title_sort = item.title
         new_title_sort_bytes = ensure_bytes(new_title_sort)
         parm_type = plexapi.utils.SEARCHTYPES[item.type]
         parms = {

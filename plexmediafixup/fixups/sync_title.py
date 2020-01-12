@@ -258,11 +258,10 @@ def process_item(dryrun, verbose, item, path_mappings):
 
     dryrun_str = "Dryrun: " if dryrun else ""
 
-    if verbose:
-        print("{d}Changing title field of {i.type} {i.title!r} "
-              "to {title_tag!r}".
-              format(d=dryrun_str, title_tag=title_tag, i=item))
-        sys.stdout.flush()
+    print("{d}Changing title field of {i.type} {i.title!r} "
+          "to {title_tag!r}".
+          format(d=dryrun_str, title_tag=title_tag, i=item))
+    sys.stdout.flush()
 
     if not dryrun:
 
