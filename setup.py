@@ -67,6 +67,8 @@ setuptools.setup(
     version=package_version,
     packages=[
         'plexmediafixup',
+        'plexmediafixup/fixups',
+        'plexmediafixup/utils',
     ],
     include_package_data=True,  # as specified in MANIFEST.in
     scripts=[
