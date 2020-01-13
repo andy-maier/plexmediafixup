@@ -127,6 +127,7 @@ Installation and configuration
    distros, the package containing this command is named ``ffmpeg``.
    Alternatively, download it from https://ffmpeg.org/download.html.
 
+
 Usage
 -----
 
@@ -152,6 +153,25 @@ If you are satisfied with what you see, perform the changes:
 .. code-block:: bash
 
     $ plexmediafixup my_config_file.yml --verbose
+
+
+Simplified setup and run script
+-------------------------------
+
+If you want to run the ``plexmediafixup`` command regularly, this GitHub repo
+contains a ``run_plexmediafixup.sh`` script that simplifies the setup somewhat.
+Copy that script to a directory in your PATH and modify it as needed.
+That script has the following prerequisites:
+
+* The plexmediafixup config file exists as ``$HOME/.config/plexmediafixup.yml``
+* The `PlexAPI config file`_ exists
+* The ``ffprobe`` and ``virtualenv`` commands are available
+
+That script performs all the setup that is needed, such as checking if the
+``virtualenv`` and ``ffprobe`` commands are available, creating a Python virtual
+environment, activating it, installing the plexmediafixup package into that
+virtual environment, checking if the plexmediafixup config file exists, and
+finally running the ``plexmediafixup`` command with that config file.
 
 
 Bugs and features
