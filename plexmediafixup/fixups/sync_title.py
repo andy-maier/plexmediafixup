@@ -16,8 +16,10 @@ import subprocess
 import plexapi
 import plexapi.exceptions
 import plexapi.utils
+import requests.exceptions
 from plexmediafixup.fixup import Fixup
 from plexmediafixup.utils.unicode import ensure_bytes, ensure_unicode
+from plexmediafixup.utils.watcher import Watcher
 
 
 FIXUP_NAME = os.path.splitext(os.path.basename(__file__))[0]
@@ -73,7 +75,16 @@ class SyncTitle(Fixup):
                       format(fixup=FIXUP_NAME, type=st))
                 return 1
 
-        for section in plex.library.sections():
+        try:
+            with Watcher() as w:
+                sections = plex.library.sections()
+        except (plexapi.exceptions.PlexApiException,
+                requests.exceptions.RequestException) as exc:
+            print("Error: Cannot list sections: {msg} ({w.debug_str})".
+                  format(msg=exc, w=w))
+            return 1
+
+        for section in sections:
 
             if section.type not in section_types:
                 continue
@@ -91,7 +102,16 @@ class SyncTitle(Fixup):
                   format(s=section))
             sys.stdout.flush()
 
-            items = section.all()
+            try:
+                with Watcher() as w:
+                    items = section.all()
+            except (plexapi.exceptions.PlexApiException,
+                    requests.exceptions.RequestException) as exc:
+                print("Error: Cannot list all items in section of type "
+                      "{s.type}: {s.title!r}: {msg} ({w.debug_str})".
+                      format(s=section, msg=exc, w=w))
+                return 1
+
             for item in items:
                 if item.type == 'movie':
                     rc = process_item(
@@ -99,7 +119,17 @@ class SyncTitle(Fixup):
                     if rc:
                         return rc
                 elif item.type == 'show':
-                    ep_items = item.episodes()
+
+                    try:
+                        with Watcher() as w:
+                            ep_items = item.episodes()
+                    except (plexapi.exceptions.PlexApiException,
+                            requests.exceptions.RequestException) as exc:
+                        print("Error: Cannot list episodes of show {show!r}: "
+                              "{msg} ({w.debug_str})".
+                              format(show=item.title, msg=exc, w=w))
+                        return 1
+
                     for ep_item in ep_items:
                         rc = process_item(
                             dryrun, verbose, ep_item, path_mappings)
@@ -275,12 +305,15 @@ def process_item(dryrun, verbose, item, path_mappings):
             'title.value': new_title_b,
             'title.locked': 1,
         }
+
         try:
-            item.edit(**parms)
-        except plexapi.exceptions.PlexApiException as exc:
+            with Watcher() as w:
+                item.edit(**parms)
+        except (plexapi.exceptions.PlexApiException,
+                requests.exceptions.RequestException) as exc:
             print("Error: Cannot set the title field of {i.type} {i.title!r} "
-                  "to {new_title!r}: {msg}".
-                  format(i=item, new_title=new_title, msg=exc))
+                  "to {new_title!r}: {msg} ({w.debug_str})".
+                  format(i=item, new_title=new_title, msg=exc, w=w))
             return 1
 
         # Verify the title field was changed

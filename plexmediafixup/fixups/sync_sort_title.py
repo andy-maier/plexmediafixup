@@ -15,8 +15,10 @@ from unidecode import unidecode
 import plexapi
 import plexapi.exceptions
 import plexapi.utils
+import requests.exceptions
 from plexmediafixup.fixup import Fixup
 from plexmediafixup.utils.unicode import ensure_bytes, ensure_unicode
+from plexmediafixup.utils.watcher import Watcher
 
 
 FIXUP_NAME = os.path.splitext(os.path.basename(__file__))[0]
@@ -100,7 +102,16 @@ class SyncSortTitle(Fixup):
                       format(fixup=FIXUP_NAME, type=st))
                 return 1
 
-        for section in plex.library.sections():
+        try:
+            with Watcher() as w:
+                sections = plex.library.sections()
+        except (plexapi.exceptions.PlexApiException,
+                requests.exceptions.RequestException) as exc:
+            print("Error: Cannot list sections: {msg} ({w.debug_str})".
+                  format(msg=exc, w=w))
+            return 1
+
+        for section in sections:
 
             if section.type not in section_types:
                 continue
@@ -116,7 +127,16 @@ class SyncSortTitle(Fixup):
                   "{s.title!r}".
                   format(s=section))
 
-            items = section.all()
+            try:
+                with Watcher() as w:
+                    items = section.all()
+            except (plexapi.exceptions.PlexApiException,
+                    requests.exceptions.RequestException) as exc:
+                print("Error: Cannot list all items in section of type "
+                      "{s.type}: {s.title!r}: {msg} ({w.debug_str})".
+                      format(s=section, msg=exc, w=w))
+                return 1
+
             for item in items:
                 if item.type == 'movie':
                     rc = process_item(dryrun, verbose, item, as_ascii,
@@ -128,7 +148,17 @@ class SyncSortTitle(Fixup):
                                       remove_specials)
                     if rc:
                         return rc
-                    ep_items = item.episodes()
+
+                    try:
+                        with Watcher() as w:
+                            ep_items = item.episodes()
+                    except (plexapi.exceptions.PlexApiException,
+                            requests.exceptions.RequestException) as exc:
+                        print("Error: Cannot list episodes of show {show!r}: "
+                              "{msg} ({w.debug_str})".
+                              format(show=item.title, msg=exc, w=w))
+                        return 1
+
                     for ep_item in ep_items:
                         rc = process_item(dryrun, verbose, ep_item, as_ascii,
                                           remove_specials)
@@ -179,12 +209,15 @@ def process_item(dryrun, verbose, item, as_ascii, remove_specials):
             'titleSort.value': new_title_sort_bytes,
             'titleSort.locked': 1,
         }
+
         try:
-            item.edit(**parms)
-        except plexapi.exceptions.PlexApiException as exc:
+            with Watcher() as w:
+                item.edit(**parms)
+        except (plexapi.exceptions.PlexApiException,
+                requests.exceptions.RequestException) as exc:
             print("Error: Cannot set the sort title field of "
-                  "{i.type} item to {new_title!r}: {msg}".
-                  format(i=item, new_title=new_title_sort, msg=exc))
+                  "{i.type} item to {new_title!r}: {msg} ({w.debug_str})".
+                  format(i=item, new_title=new_title_sort, msg=exc, w=w))
             return 1
 
         # Verify the sort title field was changed
