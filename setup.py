@@ -103,7 +103,7 @@ setuptools.setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
-        'Intended Audience :: Developers',
+        'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2',
@@ -113,6 +113,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
-        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Multimedia',
+        'Topic :: Utilities',
     ]
 )
