@@ -10,8 +10,10 @@ import argparse
 import plexapi
 import plexapi.myplex
 import plexapi.exceptions
+import requests.exceptions
 from .utils.smart_formatter import SmartFormatter
 from .utils.config_file import ConfigFile, ConfigFileError
+from .utils.watcher import Watcher
 from .fixup import FixupManager
 from .version import __version__
 
@@ -278,10 +280,17 @@ def main():
             return 1
 
         try:
-            plex = plexapi.server.PlexServer()
-        except plexapi.exceptions.PlexApiException as exc:
-            print("Error: Cannot connect to Plex server at {url}: {msg}".
-                  format(url=server_baseurl, msg=exc))
+            with Watcher() as w:
+                # If the PMS is not reachable on the network, this raises
+                # requests.exceptions.ConnectionError (using max_retries=0 and
+                # the connect and read timeout configured in the plexapi config
+                # file as plexapi.timeout).
+                plex = plexapi.server.PlexServer()
+        except (plexapi.exceptions.PlexApiException,
+                requests.exceptions.RequestException) as exc:
+            print("Error: Cannot connect to Plex server at {url}: {msg} "
+                  "({w.debug_str})".
+                  format(url=server_baseurl, msg=exc, w=w))
             return 1
 
         print("Connected directly to Plex Media Server at {url}".
@@ -313,25 +322,28 @@ def main():
             return 1
 
         try:
-            account = plexapi.myplex.MyPlexAccount(
-                myplex_username, myplex_password)
-        except plexapi.exceptions.PlexApiException as exc:
-            print("Error: Cannot login to Plex account {user}: {msg}".
-                  format(user=myplex_username, msg=exc))
+            with Watcher() as w:
+                account = plexapi.myplex.MyPlexAccount(
+                    myplex_username, myplex_password)
+        except (plexapi.exceptions.PlexApiException,
+                requests.exceptions.RequestException) as exc:
+            print("Error: Cannot login to Plex account {user}: {msg} "
+                  "({w.debug_str})".
+                  format(user=myplex_username, msg=exc, w=w))
             return 1
 
         try:
-            plex = account.resource(server_name).connect()
-        except plexapi.exceptions.PlexApiException as exc:
+            with Watcher() as w:
+                plex = account.resource(server_name).connect()
+        except (plexapi.exceptions.PlexApiException,
+                requests.exceptions.RequestException) as exc:
             print("Error: Cannot connect to server {srv} of Plex account "
-                  "{user}: {msg}".
-                  format(srv=server_name, user=myplex_username, msg=exc))
+                  "{user}: {msg} ({w.debug_str})".
+                  format(srv=server_name, user=myplex_username, msg=exc, w=w))
             return 1
 
         print("Connected indirectly to server {srv} of Plex account {user}".
               format(srv=server_name, user=myplex_username))
-
-    plexapi.TIMEOUT = 300
 
     for fixup in fixups:
         name = fixup['name']  # required item
