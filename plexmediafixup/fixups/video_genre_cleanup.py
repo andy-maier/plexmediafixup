@@ -268,11 +268,11 @@ def process_item(dryrun, verbose, item, change, change_rev, remove, if_empty):
                 'type': parm_type,
                 'id': item.ratingKey,
                 # This deletes the actual genres:
-                'genre[].tag.tag-': ','.join(act_genre_strs),
+                'genre[].tag.tag-': ensure_bytes(','.join(act_genre_strs)),
             }
-            for i, genre_str in enumerate(new_genre_strs):
+            for i, g_str in enumerate(new_genre_strs):
                 # This adds the new genres:
-                parms['genre[{i}].tag.tag'.format(i=i)] = genre_str
+                parms['genre[{i}].tag.tag'.format(i=i)] = ensure_bytes(g_str)
             try:
                 with Watcher() as w:
                     item.edit(**parms)
