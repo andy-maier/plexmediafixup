@@ -47,7 +47,7 @@ fixups:
   # by setting it to the value of the title tag found in the corresponding
   # media files.
   - name: sync_title
-    enabled: true
+    enabled: false
     kwargs:
 
       # String or list of strings that specify the library section types that

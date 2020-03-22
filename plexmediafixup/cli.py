@@ -243,7 +243,6 @@ def main():
     plexapi_config_path = config.data['plexapi_config_path']  # required item
     direct_connection = config.data['direct_connection']  # required item
     server_name = config.data['server_name']  # optional but defaulted item
-    path_mappings = config.data['path_mappings']  # optional but defaulted item
     fixups = config.data['fixups']  # optional but defaulted item
     fixup_mgr = FixupManager()
 
@@ -349,13 +348,13 @@ def main():
         name = fixup['name']  # required item
         enabled = fixup['enabled']  # required item
         dryrun = args.dryrun
-        kwargs = fixup.get('kwargs', dict())
+        fixup_kwargs = fixup.get('kwargs', dict())
         if enabled:
             fixup = fixup_mgr.get_fixup(name)
             print("Executing fixup: {name} (dryrun={dryrun})".
                   format(name=name, dryrun=dryrun))
             rc = fixup.run(plex=plex, dryrun=dryrun, verbose=args.verbose,
-                           path_mappings=path_mappings, **kwargs)
+                           config=config.data, fixup_kwargs=fixup_kwargs)
             if rc:
                 print("Error: Fixup {name} has encountered errors - aborting".
                       format(name=name))

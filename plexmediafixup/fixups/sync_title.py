@@ -34,35 +34,39 @@ class SyncTitle(Fixup):
     def __init__(self):
         super(SyncTitle, self).__init__(FIXUP_NAME)
 
-    def run(self, plex, dryrun, verbose, path_mappings,
-            section_types=None, section_pattern=None):
+    def run(self, plex, dryrun, verbose, config, fixup_kwargs):
         """
-        Standard parameters:
+        Parameters:
 
           plex (plexapi.PlexServer): PMS to work against.
 
-          dryrun (bool): Dryrun flag.
+          dryrun (bool): Dryrun flag from command line.
 
-          verbose (bool): Verbose flag.
+          verbose (bool): Verbose flag from command line.
 
-          path_mappings (list(dict(server=strng, local=string))): File path
-            mappings between PMS server and local system.
+          config (dict): The entire config file.
 
-        Fixup-specific parameters (kwargs in config):
+          fixup_kwargs (dict): The kwargs config parameter for the fixup,
+            with the following items:
 
-          section_types (string or iterable(string)):
-            The library section types that should be processed. Valid values
-            are: 'movie', 'show'. For 'show', only its episodes will be
-            processed (not the show item itself). A value of None (null in
-            config file) means to process all valid section types. Optional,
-            default is None.
+            section_types (string or iterable(string)):
+              The library section types that should be processed. Valid values
+              are: 'movie', 'show'. For 'show', only its episodes will be
+              processed (not the show item itself). A value of None (null in
+              config file) means to process all valid section types. Optional,
+              default is None.
 
-          section_pattern (string):
-            Regex pattern defining library section names that should be
-            processed within the configured section types. A value of None
-            (null in config file) means to process all library sections of the
-            configured types. Optional, default is None.
+            section_pattern (string):
+              Regex pattern defining library section names that should be
+              processed within the configured section types. A value of None
+              (null in config file) means to process all library sections of
+              the configured types. Optional, default is None.
         """
+
+        path_mappings = config.get('path_mappings', [])
+
+        section_types = fixup_kwargs.get('section_types', None)
+        section_pattern = fixup_kwargs.get('section_pattern', None)
 
         if section_types is None:
            section_types = ['movie', 'show']
@@ -151,9 +155,13 @@ def local_path(server_path, path_mappings):
     """
     for mapping in path_mappings:
         server_root = mapping.get('server')
+        if not server_root.endswith(os.path.sep):
+            server_root += os.path.sep
         local_root = mapping.get('local')
+        if not local_root.endswith(os.path.sep):
+            local_root += os.path.sep
         if server_path.startswith(server_root):
-            relpath = server_path[len(server_root)+1:]
+            relpath = server_path[len(server_root):]
             return os.path.join(local_root, relpath)
     return None
 
