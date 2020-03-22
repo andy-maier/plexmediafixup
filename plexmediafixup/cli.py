@@ -111,6 +111,55 @@ CONFIG_FILE_SCHEMA = {
                 }
             }
         },
+        "video_genre_cleanup": {
+            "$id": "#/properties/video_genre_cleanup",
+            "type": "array",
+            "title": "List of definitions for video genre cleanup",
+            "default": [],
+            "items": {
+                "$id": "#/properties/video_genre_cleanup/items",
+                "type": "object",
+                "required": [
+                    "language",
+                    "change",
+                    "remove",
+                    "if_empty",
+                ],
+                "additionalProperties": False,
+                "properties": {
+                    "language": {
+                        "$id": "#/properties/video_genre_cleanup/items/"
+                               "properties/language",
+                        "type": "string",
+                        "title": "Language to which this definition applies, "
+                                 "using the two-letter codes from ISO 639-1",
+                        "examples": [
+                            "de"
+                        ],
+                    },
+                    "change": {
+                        "$id": "#/properties/video_genre_cleanup/items/"
+                               "properties/change",
+                        "type": "object",
+                        "title": "Genres to be changed, as a dict with key "
+                                 "being desired genre, and value  being list "
+                                 "of original genres",
+                    },
+                    "remove": {
+                        "$id": "#/properties/video_genre_cleanup/items/"
+                               "properties/remove",
+                        "type": "array",
+                        "title": "Genres to be removed",
+                    },
+                    "if_empty": {
+                        "$id": "#/properties/video_genre_cleanup/items/"
+                               "properties/if_empty",
+                        "type": ["null", "string"],
+                        "title": "Genre to be set if list of genres is empty",
+                    },
+                }
+            }
+        },
         "fixups": {
             "$id": "#/properties/fixups",
             "type": "array",

@@ -27,6 +27,112 @@ path_mappings:
   - server: /
     local: /
 
+# Definitions for video genre cleanup
+video_genre_cleanup:
+
+  # one list item for each language.
+  -
+
+    # Language to which this list item applies, using the two-letter language
+    # codes defined in ISO 639-1.
+    language: de
+
+    # Genres to be changed.
+    # The changes are defined in a dictionary, where the dictionary key is
+    # the desired genre, and the dictionary value is a (possibly empty)
+    # list of original genres that will be changed to the desired genre.
+    # If an original genre does not match any of those, it is left
+    # unchanged. If an original genre occurs in multiple desired genres,
+    # it is changed to all those desired genres.
+    change:
+      Abenteuer:
+        - Action & Adventure
+        - Adventure
+      Action:
+        - Action & Adventure
+      Anime:
+      Biographie:
+        - Biography
+      Dokumentation:
+        - Documentary
+        - Dokumentarfilm
+      Eastern:
+      Erotik:
+      Familie:
+        - Family
+        - Kinder-/Familienfilm
+      Fantasy:
+      Film-Noir:
+        Film Noir
+      Historie:
+        - Historienfilm
+        - History
+      Horror:
+        - Grusel
+      Kampfsport:
+      Katastrophen:
+      Kinder:
+        - Children
+        - Kids
+        - Kinder-/Familienfilm
+      Komödie:
+        - Comedy
+      Krieg:
+        - Kriegsfilm
+        - War
+      Krimi:
+        - Crime
+        - Krimireihe
+      Liebe/Romantik:
+        - Liebesfilm
+        - Romance
+      Live-Show:
+      Melodram:
+        - Drama
+      Musik:
+        - Music
+        - Musikfilm
+      Musical:
+      Mystery:
+      Reality:
+      Reisen:
+        - Travel
+      Satire:
+      Science-Fiction:
+        - Sci-Fi
+        - Science Fiction
+      Soap:
+      Spannung:
+        - Suspense
+      Special Interest:
+      Splatter:
+      Sport:
+        - Sportfilm
+      Stummfilm:
+      Talk-Show:
+        - Talk Show
+      Thriller:
+      Tiere:
+        - Tierfilm
+      Trickfilm:
+        - Animation
+      Western:
+
+    # Genres to be removed.
+    remove:
+      - k.A.
+      - K.A.
+      - Mini-Series
+      - TV Movie
+      - TV-Film
+      - TV-Mini-Serie
+      - TV-Pilotfilm
+      - Kurzfilm
+
+    # Genre to be set if the item has an empty list of genres.
+    # A value of null causes the list of genres to remain empty in that case.
+    if_empty: "<keins>"
+
 # List of fixups. The same fixup can be specified more than once. The enabled
 # fixups in this list will be run in the specified order.
 #
@@ -47,7 +153,7 @@ fixups:
   # by setting it to the value of the title tag found in the corresponding
   # media files.
   - name: sync_title
-    enabled: false
+    enabled: true
     kwargs:
 
       # String or list of strings that specify the library section types that
@@ -90,3 +196,31 @@ fixups:
       # Boolean that controls whether special characters will be removed from
       # the sort title.
       remove_specials: true
+
+  # cleanup_genres is a fixup that walks through the movie, show and episode
+  # items of the configured library sections, and cleans up the "genre" field
+  # of each item. It can change genres to desired (normalized) genres, and
+  # it can also remove useless genres. The changes and removals can be
+  # configured.
+  - name: cleanup_genres
+    enabled: true
+    kwargs:
+
+      # String or list of strings that specify the library section types that
+      # should be processed. Valid values are: 'movie', 'show'. For 'show',
+      # only the show items will be processed, but not the episodes (they do
+      # not define a separate genre). A value of null means to process all
+      # valid section types.
+      # Optional, default is null.
+      section_types: null
+
+      # String that specifies a regex pattern defining library section names
+      # that should be processed within the configured section types. A value
+      # of null means to process all library sections of the configured types.
+      # Optional, default is null.
+      section_pattern: null
+
+      # Language to be used to select the genre cleanup definitions from the
+      # "video_genre_cleanup" config parameter, using the two-letter language
+      # codes defined in ISO 639-1.
+      language: de

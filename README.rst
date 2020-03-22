@@ -49,6 +49,14 @@ Currently supported fixups are:
   Use this fixup if you are not happy with the fact that PMS removes leading
   articles and other words from the sort title.
 
+* video_genre_cleanup:
+
+  This fixup walks through the movie and show items of the configured library
+  sections of the Plex Media Server, and cleans up the "Genres" field of each
+  item. It can consolidate differently spelled genres into a single genre,
+  remove useless genres, and set a default genre if the list of genres is empty.
+  These changes can be configured in the config file.
+
 Look at the example plexmediafixup config file `example_config_file.yml`_ if
 you want to see what can be configured. It describes each parameter.
 
