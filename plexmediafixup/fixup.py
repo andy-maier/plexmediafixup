@@ -74,8 +74,20 @@ class Fixup(object):
         """
         self.name = name
 
-    def run(self, plex, dryrun, verbose, **kwargs):
+    def run(self, plex, dryrun, verbose, config, fixup_kwargs):
         """
         Funxtion to execute the fixup. Must be implemented in fixup subclass.
+
+        Parameters:
+
+          plex (plexapi.PlexServer): PMS to work against.
+
+          dryrun (bool): Dryrun flag from command line.
+
+          verbose (bool): Verbose flag from command line.
+
+          config (dict): The entire config file.
+
+          fixup_kwargs (dict): The kwargs config parameter for the fixup.
         """
         raise NotImplementedError
