@@ -4,10 +4,10 @@
 # Customize these variables as needed
 
 # Name of Python virtualenv that is created:
-venv_name="plex27"
+venv_name="plexmediafixup"
 
 # Python command to use (with absolute path or in PATH):
-venv_python="python2.7"
+venv_python="python"
 
 # plexmediafixup config file to be used:
 config_file="$HOME/.config/plexmediafixup.yml"
@@ -55,8 +55,11 @@ function setup_venv {
 
   pip show $package_name >/dev/null 2>&1
   if [[ $? != 0 ]]; then
-    echo "Installing Python package $package_name"
+    echo "Installing Python package $package_name from $package_source"
     pip install $package_source || return 1
+  else
+    echo "Upgrading Python package $package_name from $package_source"
+    pip install --upgrade $package_source || return 1
   fi
 
   return 0
