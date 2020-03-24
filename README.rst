@@ -167,19 +167,23 @@ Simplified setup and run script
 -------------------------------
 
 If you want to run the ``plexmediafixup`` command regularly, this GitHub repo
-contains a ``run_plexmediafixup.sh`` script that simplifies the setup somewhat.
-Copy that script to a directory in your PATH and modify it as needed.
-That script has the following prerequisites:
+contains ``run_plexmediafixup.sh`` and ``run_plexmediafixup.bat`` scripts that
+simplify the setup somewhat.
+Copy the script for your OS (.bat for native Windows, .sh otherwise) to a
+directory in your PATH and modify it as needed.
+
+These scripts have the following prerequisites:
 
 * The plexmediafixup config file exists as ``$HOME/.config/plexmediafixup.yml``
+  or, on native Windows as ``%HOMEDRIVE%%HOMEPATH%\.config\plexmediafixup.yml``
 * The `PlexAPI config file`_ exists
-* The ``ffprobe`` and ``virtualenv`` commands are available
+* The ``ffprobe`` and ``virtualenv`` commands are available in the PATH
 
-That script performs all the setup that is needed, such as checking if the
+These scripts perform all the setup that is needed (such as checking if the
 ``virtualenv`` and ``ffprobe`` commands are available, creating a Python virtual
 environment, activating it, installing the plexmediafixup package into that
-virtual environment, checking if the plexmediafixup config file exists, and
-finally running the ``plexmediafixup`` command with that config file.
+virtual environment, checking if the plexmediafixup config file exists), and
+finally run the ``plexmediafixup`` command with that config file.
 
 
 Bugs and features

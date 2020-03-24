@@ -5,7 +5,7 @@
 rem Customize these variables as needed
 
 rem Name of Python virtualenv that is created:
-set venv_name=plex27
+set venv_name=plexmediafixup
 
 rem Python command to use (with absolute path or in PATH):
 set venv_python=python
@@ -54,8 +54,12 @@ if "%VIRTUAL_ENV%"=="" (
 
 pip show %package_name% >nul 2>&1
 if errorlevel 1 (
-  echo Installing Python package %package_name%
+  echo Installing Python package %package_name% from %package_source%
   pip install %package_source%
+  if errorlevel 1 exit /b 1
+) else (
+  echo Upgrading Python package %package_name% from %package_source%
+  pip install --upgrade %package_source%
   if errorlevel 1 exit /b 1
 )
 
