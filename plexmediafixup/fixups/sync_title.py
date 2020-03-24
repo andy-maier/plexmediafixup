@@ -152,17 +152,26 @@ def local_path(server_path, path_mappings):
     """
     Return the local path for a server_path, translating it using the
     specified path_mappings.
+
+    The server_path and path_mappings may use any path separator.
+
+    The returned local path uses the path separator of the OS running this
+    module.
     """
     for mapping in path_mappings:
-        server_root = mapping.get('server')
-        if not server_root.endswith(os.path.sep):
-            server_root += os.path.sep
-        local_root = mapping.get('local')
-        if not local_root.endswith(os.path.sep):
-            local_root += os.path.sep
+
+        server_root = mapping.get('server').replace('\\', '/')
+        if not server_root.endswith('/'):
+            server_root += '/'
+
+        server_path = server_path.replace('\\', '/')
+
         if server_path.startswith(server_root):
-            relpath = server_path[len(server_root):]
+            relpath = server_path[len(server_root):].replace('/', os.path.sep)
+            local_root = mapping.get('local'). \
+                replace('\\', os.path.sep).replace('/', os.path.sep)
             return os.path.join(local_root, relpath)
+
     return None
 
 
