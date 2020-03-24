@@ -197,12 +197,13 @@ fixups:
       # the sort title.
       remove_specials: true
 
-  # cleanup_genres is a fixup that walks through the movie, show and episode
-  # items of the configured library sections, and cleans up the "genre" field
-  # of each item. It can change genres to desired (normalized) genres, and
-  # it can also remove useless genres. The changes and removals can be
-  # configured.
-  - name: cleanup_genres
+  # video_genre_cleanup is a fixup that walks through the movie and show items
+  # of the configured library sections, and cleans up the "Genres" field of
+  # each item. It can consolidate genres into a defined list of genres, remove
+  # useless genres, and set a default genre if the list of genres is empty.
+  # These changes can be configured in the "video_genre_cleanup" config
+  # parameter.
+  - name: video_genre_cleanup
     enabled: true
     kwargs:
 
