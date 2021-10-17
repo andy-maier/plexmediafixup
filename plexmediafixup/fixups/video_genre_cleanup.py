@@ -224,9 +224,11 @@ def process_item(dryrun, verbose, item, change, change_rev, remove, if_empty):
     unknown_genre_strs = []
     for genre_obj in genre_objs:
         genre_str = genre_obj.tag
+        if isinstance(genre_str, six.binary_type):
+            genre_str = genre_str.decode('utf-8')
         if not genre_str:
             continue
-        if genre_str == if_empty:
+        if if_empty and genre_str == if_empty:
             # Remove that one for now (will be added again if still needed)
             continue
         if genre_str in remove:
