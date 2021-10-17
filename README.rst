@@ -189,34 +189,24 @@ finally run the ``plexmediafixup`` command with that config file.
 Trouble shooting
 ----------------
 
-How to obtain Plex token
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-The ``server_token`` parameter in the Plex config file is the Plex token of
-the user name used to log on to plex.tv. Your Plex token can be found by logging
-on to plex.tv with the user name you want the Plex token for, looking at any
-media file, opening its media info, viewing it as XML, and capturing the token
-from the "Plex-token" query parameter of the Browser URL.
-
-
 HTTP status 500 Internal Server Error
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If the ``video_genre_cleanup`` fixup of the ``plexmediafixup`` command fails as follows:
 
-```
-Error: Cannot change the genres field of movie 'Star Wars VW Werbung' from [] to ['<keins>']:
-  (500) internal_server_error; http://192.168.0.12:32400/library/sections/None/all?type=1&
-  id=53458&genre%5B%5D.tag.tag-=&genre%5B0%5D.tag.tag=%3Ckeins%3E
-  <html><head><title>Internal Server Error</title></head><body><h1>500 Internal Server Error</h1></body></html>
-  (raised plexapi.exceptions.BadRequest after 0s)
-Error: Fixup video_genre_cleanup has encountered errors - aborting
-```
+.. code-block:: text
 
-Then one possible reason is that the Plex token is invalid.
+    Error: Cannot change the genres field of movie 'Star Wars VW Werbung' from [] to ['<keins>']:
+      (500) internal_server_error; http://192.168.0.12:32400/library/sections/None/all?type=1&
+      id=53458&genre%5B%5D.tag.tag-=&genre%5B0%5D.tag.tag=%3Ckeins%3E
+      <html><head><title>Internal Server Error</title></head><body><h1>500 Internal Server Error</h1></body></html>
+      (raised plexapi.exceptions.BadRequest after 0s)
+    Error: Fixup video_genre_cleanup has encountered errors - aborting
 
-To fix this, update the ``server_token`` parameter in the Plex config file
-with the current Plex token.
+Then one possible reason is that the server auth token is invalid.
+
+To fix this, update the ``server_token`` parameter in the `PlexAPI config file`_
+to the current server auth token (see `Finding your server auth token`_).
 
 
 Bugs and features
