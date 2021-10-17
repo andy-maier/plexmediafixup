@@ -202,7 +202,7 @@ def get_title_tag(media_file):
     ffprobe = ffmpy.FFprobe(
         global_options=['-hide_banner', '-show_format',
                         '-of', 'json=sv=ignore'],
-        inputs={media_file_b: None})
+        inputs={media_file: None})
 
     try:
         stdout, stderr = ffprobe.run(
