@@ -62,6 +62,7 @@ video_genre_cleanup:
         - Family
         - Kinder-/Familienfilm
       Fantasy:
+        - Sci-Fi & Fantasy
       Film-Noir:
         Film Noir
       Historie:
@@ -100,6 +101,7 @@ video_genre_cleanup:
       Satire:
       Science-Fiction:
         - Sci-Fi
+        - Sci-Fi & Fantasy
         - Science Fiction
       Soap:
       Spannung:
