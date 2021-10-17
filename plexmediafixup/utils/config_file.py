@@ -78,7 +78,7 @@ class ConfigFile(object):
 
         # Load the config file
         try:
-            with open(self.filepath) as fp:
+            with open(self.filepath, 'r', encoding='utf-8') as fp:
                 try:
                     data = yaml.load(
                         fp, Loader=yamlloader.ordereddict.CSafeLoader)
