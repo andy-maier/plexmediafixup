@@ -68,7 +68,7 @@ class CleanupGenre(Fixup):
 
           verbose (bool): Verbose flag from command line.
 
-          config (dict): The entire config file.
+          config (ConfigFile): The config file.
 
           fixup_kwargs (dict): The kwargs config parameter for the fixup,
             with the following items:
@@ -93,7 +93,7 @@ class CleanupGenre(Fixup):
               language codes defined in ISO 639-1.
         """
 
-        video_genre_cleanup = config.get('video_genre_cleanup', [])
+        video_genre_cleanup = config.data.get('video_genre_cleanup', [])
 
         section_types = fixup_kwargs.get('section_types', None)
         section_pattern = fixup_kwargs.get('section_pattern', None)
@@ -149,13 +149,12 @@ class CleanupGenre(Fixup):
             if section_pattern is not None and \
                     re.search(section_pattern, section.title) is None:
                 if verbose:
-                    print("Skipping {s.type} library section {s.title!r} "
+                    print("Skipping {s.type} section {s.title!r} "
                           "that does not match the specified pattern".
                           format(s=section))
                 continue
 
-            print("Processing library section of type {s.type}: "
-                  "{s.title!r}".
+            print("Processing {s.type} section {s.title!r}".
                   format(s=section))
 
             try:
@@ -163,8 +162,8 @@ class CleanupGenre(Fixup):
                     items = section.all()
             except (plexapi.exceptions.PlexApiException,
                     requests.exceptions.RequestException) as exc:
-                print("Error: Cannot list all items in section of type "
-                      "{s.type}: {s.title!r}: {msg} ({w.debug_str})".
+                print("Error: Cannot list all items in {s.type} section "
+                      "{s.title!r}: {msg} ({w.debug_str})".
                       format(s=section, msg=exc, w=w))
                 return 1
 
@@ -181,7 +180,7 @@ class CleanupGenre(Fixup):
                         return rc
                 else:
                     print("Error: Invalid section type {type!r} encountered in "
-                          "library section {s.title!r}".
+                          "section {s.title!r}".
                           format(type=item.type, s=section))
                     return 1
 

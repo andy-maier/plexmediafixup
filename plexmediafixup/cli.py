@@ -327,6 +327,9 @@ def main():
                   format(file=plexapi_config_path))
             return 1
 
+        print("Connecting directly to Plex Media Server at {url}".
+              format(url=server_baseurl))
+
         try:
             with Watcher() as w:
                 # If the PMS is not reachable on the network, this raises
@@ -369,6 +372,9 @@ def main():
                   format(file=config.filepath))
             return 1
 
+        print("Connecting indirectly to server {srv} of Plex account {user}".
+              format(srv=server_name, user=myplex_username))
+
         try:
             with Watcher() as w:
                 account = plexapi.myplex.MyPlexAccount(
@@ -403,7 +409,7 @@ def main():
             print("Executing fixup: {name} (dryrun={dryrun})".
                   format(name=name, dryrun=dryrun))
             rc = fixup.run(plex=plex, dryrun=dryrun, verbose=args.verbose,
-                           config=config.data, fixup_kwargs=fixup_kwargs)
+                           config=config, fixup_kwargs=fixup_kwargs)
             if rc:
                 print("Error: Fixup {name} has encountered errors - aborting".
                       format(name=name))
