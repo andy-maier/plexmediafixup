@@ -13,6 +13,7 @@
 /try/
 .ipynb_checkpoints/
 /*.done
+collections.yaml
 *.pyc
 *.pyo
 *.log
