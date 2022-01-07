@@ -57,6 +57,19 @@ Currently supported fixups are:
   remove useless genres, and set a default genre if the list of genres is empty.
   These changes can be configured in the config file.
 
+* preserve_collections:
+
+  This fixup walks through the movie and show items of the configured library
+  sections of the Plex Media Server, and preserves the collections of each item.
+  This is done by syncing any present collections between PMS and a collections
+  file. This solves the issue that PMS resets the collections every now and
+  then, when updating the metadata of the item. Since the presence of a
+  collection either in PMS or in the collections file causes it to be synced,
+  the intentional removal of a collection now requires removing it from PMS and
+  removing it from the collections file. The collections file is in YAML format
+  and is self-explanatory. The path name of the collections file can be
+  configured in the config file.
+
 Look at the example plexmediafixup config file `example_config_file.yml`_ if
 you want to see what can be configured. It describes each parameter.
 

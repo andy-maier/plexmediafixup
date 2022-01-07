@@ -227,3 +227,33 @@ fixups:
       # "video_genre_cleanup" config parameter, using the two-letter language
       # codes defined in ISO 639-1.
       language: de
+
+  # preserve_collections is a fixup that walks through the movie and show items
+  # of the configured library sections, and preserves the "Collections" field of
+  # each item, by syncing that data in both directions between PMS and a
+  # collections file. The syncing is based on currently present collections: If
+  # a collection is present, it will be synced to the other side. In order to
+  # remove a collection from a movie/show item, the user needs to remove it from
+  # both PMS and the collections file.
+  - name: preserve_collections
+    enabled: true
+    kwargs:
+
+      # String or list of strings that specify the library section types that
+      # should be processed. Valid values are: 'movie', 'show'. For 'show',
+      # only the show items will be processed, but not the episodes (they do
+      # not define a separate genre). A value of null means to process all
+      # valid section types.
+      # Optional, default is null.
+      section_types: null
+
+      # String that specifies a regex pattern defining library section names
+      # that should be processed within the configured section types. A value
+      # of null means to process all library sections of the configured types.
+      # Optional, default is null.
+      section_pattern: null
+
+      # Path name of the collections file. Relative path names are relative to
+      # the directory of this config file. The collections file is in YAML
+      # format.
+      collections_file: collections.yaml
